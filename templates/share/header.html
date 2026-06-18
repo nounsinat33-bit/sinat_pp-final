@@ -1,0 +1,118 @@
+<header class="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/90 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+
+        <!-- Logo Brand -->
+        <div class="flex items-center">
+            <a href="{{ url_for('home') }}" class="flex items-center gap-2.5 text-lg font-bold tracking-tight text-slate-900 group">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SINAT SHOP Logo" class="h-8 w-auto transition-transform group-hover:scale-105">
+                <span class="font-black text-2xl tracking-wider text-slate-900 uppercase">SINAT SHOP</span>
+            </a>
+        </div>
+
+        <!-- Navigation Links (Desktop) -->
+        <nav class="hidden md:flex items-center space-x-8">
+            <a href="{{ url_for('home') }}"
+               class="text-sm font-semibold tracking-wide uppercase transition-all duration-200 py-1.5 border-b-2
+               {{ 'text-brand-600 border-brand-600' if request.endpoint == 'home' else 'text-slate-500 border-transparent hover:text-slate-950' }}">
+                Home
+            </a>
+            <a href="{{ url_for('products') }}"
+               class="text-sm font-semibold tracking-wide uppercase transition-all duration-200 py-1.5 border-b-2
+               {{ 'text-brand-600 border-brand-600' if request.endpoint in ['products', 'view_product'] else 'text-slate-500 border-transparent hover:text-slate-950' }}">
+                Products
+            </a>
+            <a href="{{ url_for('about') }}"
+               class="text-sm font-semibold tracking-wide uppercase transition-all duration-200 py-1.5 border-b-2
+               {{ 'text-brand-600 border-brand-600' if request.endpoint == 'about' else 'text-slate-500 border-transparent hover:text-slate-950' }}">
+                About Us
+            </a>
+            <a href="{{ url_for('contact') }}"
+               class="text-sm font-semibold tracking-wide uppercase transition-all duration-200 py-1.5 border-b-2
+               {{ 'text-brand-600 border-brand-600' if request.endpoint == 'contact' else 'text-slate-500 border-transparent hover:text-slate-950' }}">
+                Contact
+            </a>
+        </nav>
+
+        <!-- Functional Icon Configuration & Auth -->
+        <div class="flex items-center gap-4">
+
+            <!-- Search Button (Mock search toggle or simple icon) -->
+            <button title="Search" class="p-2 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+
+            <!-- Favorites Action Link -->
+            <a href="{{ url_for('favorites') }}"
+               title="Favorites"
+               class="relative p-2 rounded-lg transition-colors text-slate-500 hover:bg-slate-50 hover:text-slate-900 {{ 'text-brand-600 bg-brand-50' if request.endpoint == 'favorites' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+                <span id="fav-badge-container">
+                    {% if fav_count and fav_count > 0 %}
+                    <span id="fav-badge" class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                        {{ fav_count }}
+                    </span>
+                    {% endif %}
+                </span>
+            </a>
+
+            <!-- Cart Action Link -->
+            <a href="{{ url_for('cart') }}"
+               title="Cart"
+               class="relative p-2 rounded-lg transition-colors text-slate-500 hover:bg-slate-50 hover:text-slate-900 {{ 'text-brand-600 bg-brand-50' if request.endpoint == 'cart' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                <span id="cart-badge-container">
+                    {% if cart_count and cart_count > 0 %}
+                    <span id="cart-badge" class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                        {{ cart_count }}
+                    </span>
+                    {% endif %}
+                </span>
+            </a>
+
+            <!-- User Profile Icon -->
+            <a href="{{ url_for('profile') if session.get('user') else url_for('login') }}"
+               title="{{ 'Account Profile' if session.get('user') else 'Account Login' }}"
+               class="p-2 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center justify-center {{ 'text-brand-600 bg-brand-50' if (session.get('user') and request.endpoint == 'profile') or (not session.get('user') and request.endpoint == 'login') }}">
+                {% if session.get('user') and session['user'].get('profile_pic') %}
+                <img src="{{ session['user']['profile_pic'] }}" class="w-5 h-5 rounded-full object-cover border border-slate-200">
+                {% else %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                {% endif %}
+            </a>
+
+            <!-- Mobile menu button -->
+            <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus:outline-none" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="md:hidden hidden bg-white border-b border-slate-200 absolute w-full shadow-lg" id="mobile-menu">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <a href="{{ url_for('home') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-brand-50 text-brand-700' if request.endpoint == 'home' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">Home</a>
+            <a href="{{ url_for('products') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-brand-50 text-brand-700' if request.endpoint == 'products' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">Products</a>
+            <a href="{{ url_for('about') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-brand-50 text-brand-700' if request.endpoint == 'about' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">About Us</a>
+            <a href="{{ url_for('contact') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-brand-50 text-brand-700' if request.endpoint == 'contact' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">Contact</a>
+            <a href="{{ url_for('favorites') }}" class="block px-3 py-2 rounded-md text-base font-medium {{ 'bg-brand-50 text-brand-700' if request.endpoint == 'favorites' else 'text-slate-700 hover:text-slate-900 hover:bg-slate-50' }}">Favorites</a>
+            {% if session.get('user') %}
+            <a href="{{ url_for('profile') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 border-t border-slate-100 mt-2 pt-2">My Profile</a>
+            <a href="{{ url_for('logout') }}" class="block px-3 py-2 rounded-md text-base font-medium text-rose-600 hover:text-rose-700 hover:bg-slate-50">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="block px-3 py-2 rounded-md text-base font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 border-t border-slate-100 mt-2 pt-2">Login / Account</a>
+            {% endif %}
+        </div>
+    </div>
+</header>

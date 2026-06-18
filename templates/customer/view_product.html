@@ -1,0 +1,264 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+    <!-- Top Navigation & Breadcrumbs -->
+    <nav class="flex text-xs sm:text-sm text-slate-500 font-semibold tracking-wide uppercase">
+        <a href="{{ url_for('home') }}" class="hover:text-brand-600 transition-colors">Home</a>
+        <span class="mx-2 text-slate-300">/</span>
+        <a href="{{ url_for('products') }}" class="hover:text-brand-600 transition-colors">{{ item.category }}</a>
+        <span class="mx-2 text-slate-300">/</span>
+        <span class="text-slate-900 font-bold truncate max-w-[200px]">{{ item.title }}</span>
+    </nav>
+
+    <!-- Main Detail Row Split -->
+    <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
+        
+        <!-- Left Column: Product Images -->
+        <div class="w-full lg:w-1/2 space-y-4">
+            <!-- Primary Image Frame -->
+            <div class="bg-white border border-slate-100 rounded-3xl p-8 sm:p-12 flex items-center justify-center min-h-[350px] sm:min-h-[480px] shadow-sm relative group overflow-hidden">
+                <img id="main-product-image" src="{{ item.image }}" alt="{{ item.title }}" 
+                     class="max-w-full h-auto max-h-[380px] object-contain transform group-hover:scale-105 transition-transform duration-500">
+                <button class="absolute top-4 right-4 p-2 bg-white border border-slate-100 rounded-full text-slate-400 hover:text-rose-600 shadow-sm transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Thumbnails List -->
+            <div class="grid grid-cols-4 gap-4">
+                <button onclick="setMainImage('{{ item.image }}')" class="aspect-square bg-white border border-brand-500 rounded-2xl p-2 flex items-center justify-center thumbnail-btn">
+                    <img src="{{ item.image }}" class="max-h-full object-contain">
+                </button>
+                <button onclick="setMainImage('{{ item.image }}')" class="aspect-square bg-white border border-slate-100 hover:border-slate-300 rounded-2xl p-2 flex items-center justify-center thumbnail-btn opacity-60 hover:opacity-100">
+                    <img src="{{ item.image }}" class="max-h-full object-contain filter rotate-90">
+                </button>
+                <button onclick="setMainImage('{{ item.image }}')" class="aspect-square bg-white border border-slate-100 hover:border-slate-300 rounded-2xl p-2 flex items-center justify-center thumbnail-btn opacity-60 hover:opacity-100">
+                    <img src="{{ item.image }}" class="max-h-full object-contain filter rotate-180">
+                </button>
+                <button onclick="setMainImage('{{ item.image }}')" class="aspect-square bg-white border border-slate-100 hover:border-slate-300 rounded-2xl p-2 flex items-center justify-center thumbnail-btn opacity-60 hover:opacity-100">
+                    <img src="{{ item.image }}" class="max-h-full object-contain filter -rotate-90">
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Column: Product Info -->
+        <div class="w-full lg:w-1/2 flex flex-col space-y-6">
+            
+            <div class="space-y-2">
+                <span class="text-xs font-bold uppercase tracking-widest text-brand-600 bg-brand-50 px-3 py-1 rounded-full">New Arrival</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight pt-1.5">{{ item.title }}</h1>
+                
+            </div>
+
+            <!-- Price -->
+            <div class="text-3xl font-bold text-slate-900">
+                ${{ "%.2f"|format(item.price) }}
+            </div>
+
+            <!-- Overview -->
+            <div class="prose prose-sm text-slate-500 leading-relaxed">
+                <p>{{ item.description }}</p>
+            </div>
+
+            <hr class="border-slate-100" />
+
+            <!-- Colors Options (Interactive) -->
+            <div class="space-y-2.5">
+                <span class="block text-xs font-bold uppercase tracking-wider text-slate-400">Color: <span id="color-name" class="text-slate-800">Slate Gray</span></span>
+                <div class="flex gap-3">
+                    <button onclick="selectColor(this, 'Slate Gray')" class="w-8 h-8 rounded-full bg-slate-500 ring-2 ring-offset-2 ring-brand-600 color-dot"></button>
+                    <button onclick="selectColor(this, 'Ocean Blue')" class="w-8 h-8 rounded-full bg-blue-900 ring-2 ring-offset-2 ring-transparent color-dot"></button>
+                    <button onclick="selectColor(this, 'Sand Beige')" class="w-8 h-8 rounded-full bg-amber-200 ring-2 ring-offset-2 ring-transparent color-dot"></button>
+                </div>
+            </div>
+
+            <!-- Size Options (Interactive) -->
+            <div class="space-y-2.5">
+                <div class="flex justify-between items-center">
+                    <span class="block text-xs font-bold uppercase tracking-wider text-slate-400">Size</span>
+                    <button class="text-xs font-bold text-brand-600 hover:underline">Size Guide</button>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="selectSize(this)" class="px-5 py-2.5 border border-brand-600 bg-brand-50 text-brand-600 text-sm font-semibold rounded-xl transition-all size-btn">Standard</button>
+                    <button onclick="selectSize(this)" class="px-5 py-2.5 border border-slate-200 hover:border-slate-300 text-slate-700 text-sm font-semibold rounded-xl transition-all size-btn">Extended</button>
+                    <button onclick="selectSize(this)" class="px-5 py-2.5 border border-slate-200 hover:border-slate-300 text-slate-700 text-sm font-semibold rounded-xl transition-all size-btn">Compact</button>
+                </div>
+            </div>
+
+            <hr class="border-slate-100" />
+
+            <!-- Cart Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Quantity selector -->
+                <div class="flex items-center border border-slate-200 rounded-xl px-3 py-2 bg-white">
+                    <button onclick="adjustQty(-1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors font-bold">-</button>
+                    <span id="qty-value" class="w-8 text-center text-sm font-bold text-slate-900">1</span>
+                    <button onclick="adjustQty(1)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors font-bold">+</button>
+                </div>
+
+                <form id="cart-form" action="{{ url_for('add_to_cart', item_id=item.id) }}" method="POST" class="flex-1">
+                    <!-- Hidden quantity field to align with custom qty selection if backend supports, otherwise standard submit -->
+                    <button type="submit" class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm shadow-brand-100">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Add to Cart
+                    </button>
+                </form>
+
+                <!-- Favorite Toggle Button -->
+                <button type="button" 
+                        class="toggle-favorite p-4 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-500 rounded-xl transition-all shadow-sm flex items-center justify-center"
+                        data-product-id="{{ item.id }}"
+                        title="Add to Favorites">
+                    <i class="{% if item.id in fav_list %}fas fa-heart text-rose-600{% else %}far fa-heart{% endif %} text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Value props -->
+            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100 text-xs font-semibold text-slate-500">
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                    </svg>
+                    Free Shipping over $150
+                </span>
+                <span class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                    12-Year Product Warranty
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Product Features Section -->
+    <section class="border-t border-slate-100 pt-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+            <h3 class="text-2xl font-bold text-slate-900 tracking-tight">Engineering for Modern Work</h3>
+            <p class="text-sm text-slate-500 leading-relaxed">
+                Our design represents a milestone in product design. By prioritizing posture support, breathability, and weight distribution, this item enables hours of focus and creativity.
+            </p>
+            <ul class="space-y-3.5 text-sm font-semibold text-slate-600">
+                <li class="flex items-center gap-3">
+                    <svg class="w-4 h-4 text-brand-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    A modular mechanism for optimal posture support.
+                </li >
+                <li class="flex items-center gap-3">
+                    <svg class="w-4 h-4 text-brand-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    Adjustable features for custom settings.
+                </li>
+                <li class="flex items-center gap-3">
+                    <svg class="w-4 h-4 text-brand-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"></path>
+                    </svg>
+                    Made from premium, eco-friendly components.
+                </li>
+            </ul>
+        </div>
+        <div>
+            <div class="relative rounded-3xl overflow-hidden aspect-[4/3] bg-slate-100">
+                <img src="https://images.unsplash.com/photo-1580481072645-022f9a6dbf27?q=80&w=800" 
+                     alt="Product Detail Shot" 
+                     class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <section class="border-t border-slate-100 pt-16 space-y-8">
+        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Complete Your Setup</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for rel in related_products[:4] %}
+            <div class="group flex flex-col bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                <!-- Image Wrapper -->
+                <div class="aspect-square bg-slate-50 relative overflow-hidden flex items-center justify-center p-6">
+                    <a href="{{ url_for('view_product', item_id=rel.id) }}" class="block w-full h-full">
+                        <img src="{{ rel.image }}" alt="{{ rel.title }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                    </a>
+                    <!-- Favorite Toggle Button -->
+                    <button type="button" 
+                            class="toggle-favorite absolute top-4 right-4 z-10 p-2 bg-white border border-slate-100 hover:border-slate-200 rounded-full shadow-sm transition-colors text-slate-400 hover:text-rose-600"
+                            data-product-id="{{ rel.id }}"
+                            title="Add to Favorites">
+                        <i class="{% if rel.id in fav_list %}fas fa-heart text-rose-600{% else %}far fa-heart{% endif %} text-sm"></i>
+                    </button>
+                </div>
+                
+                <!-- Details -->
+                <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                    <div class="space-y-1.5">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ rel.category }}</p>
+                        <h4 class="font-bold text-slate-800 text-sm sm:text-base line-clamp-1 group-hover:text-brand-600 transition-colors">
+                            <a href="{{ url_for('view_product', item_id=rel.id) }}">{{ rel.title }}</a>
+                        </h4>
+
+                    </div>
+
+                    <div class="flex items-baseline justify-between border-t border-slate-50 pt-4">
+                        <span class="text-lg font-bold text-slate-900">${{ rel.price }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+
+<!-- Interactive Details Javascript -->
+<script>
+    function setMainImage(src) {
+        document.getElementById('main-product-image').src = src;
+        // Update thumbnail border styling
+        const buttons = document.querySelectorAll('.thumbnail-btn');
+        event.currentTarget.classList.add('border-brand-500');
+        event.currentTarget.classList.remove('border-slate-100', 'opacity-60');
+        buttons.forEach(btn => {
+            if (btn !== event.currentTarget) {
+                btn.classList.remove('border-brand-500');
+                btn.classList.add('border-slate-100', 'opacity-60');
+            }
+        });
+    }
+
+    function selectColor(btn, name) {
+        document.getElementById('color-name').innerText = name;
+        document.querySelectorAll('.color-dot').forEach(el => {
+            el.classList.remove('ring-brand-600');
+            el.classList.add('ring-transparent');
+        });
+        btn.classList.add('ring-brand-600');
+        btn.classList.remove('ring-transparent');
+    }
+
+    function selectSize(btn) {
+        document.querySelectorAll('.size-btn').forEach(el => {
+            el.classList.remove('border-brand-600', 'bg-brand-50', 'text-brand-600');
+            el.classList.add('border-slate-200', 'text-slate-700');
+        });
+        btn.classList.add('border-brand-600', 'bg-brand-50', 'text-brand-600');
+        btn.classList.remove('border-slate-200', 'text-slate-700');
+    }
+
+    function adjustQty(amount) {
+        const qtyEl = document.getElementById('qty-value');
+        let qty = parseInt(qtyEl.innerText) + amount;
+        if (qty < 1) qty = 1;
+        qtyEl.innerText = qty;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-slate-50">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 border border-slate-100 rounded-2xl">
+        
+        <!-- Header Branding Block -->
+        <div class="text-center">
+            <a href="{{ url_for('home') }}" class="inline-flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 mb-6">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SINAT SHOP Logo" class="h-7 w-auto">
+                <span class="font-black text-xl tracking-wider text-slate-900 uppercase">SINAT SHOP</span>
+            </a>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Create Account</h2>
+            <p class="mt-2 text-sm text-slate-400">Create an account to start shopping</p>
+        </div>
+
+        <!-- Core Authentication Form -->
+        <form action="{{ url_for('register') }}" method="POST" class="mt-8 space-y-6">
+            {% if error %}
+            <div class="bg-rose-50 border border-rose-100 text-rose-600 rounded-xl p-4 text-xs font-semibold text-center">
+                {{ error }}
+            </div>
+            {% endif %}
+            <div class="space-y-4">
+                <div>
+                    <label for="full_name" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all">
+                </div>
+
+                <div>
+                    <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="name@company.com" required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all">
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all">
+                </div>
+
+                <div>
+                    <label for="confirm_password" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" 
+                        class="w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-slate-950 hover:bg-slate-900 focus:outline-none transition-colors">
+                    Create Account
+                </button>
+            </div>
+        </form>
+
+        <!-- Structural Redirection Footer -->
+        <div class="text-center pt-2">
+            <p class="text-sm text-slate-400 font-medium">
+                Already have an account? 
+                <a href="{{ url_for('login') }}" class="font-semibold text-brand-600 hover:text-brand-700">Log In here</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

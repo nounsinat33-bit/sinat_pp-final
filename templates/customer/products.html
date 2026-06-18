@@ -1,0 +1,260 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col lg:flex-row gap-8">
+    
+    <!-- Sidebar / Filters -->
+    <aside class="w-full lg:w-64 flex-shrink-0 space-y-6">
+        
+        <!-- Filter Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-100 space-y-6">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <h4 class="text-base font-bold text-slate-900">Filters</h4>
+                <button onclick="clearFilters()" class="text-xs font-semibold text-brand-600 hover:text-brand-700">Clear All</button>
+            </div>
+
+            <!-- Categories -->
+            <div class="space-y-3">
+                <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Categories</h5>
+                <div class="space-y-2.5">
+                    <label class="flex items-center gap-3 cursor-pointer text-sm font-semibold text-slate-600 hover:text-slate-900">
+                        <input type="checkbox" name="category" value="men's clothing" onchange="filterProducts()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500 cursor-pointer"> 
+                        Men's Clothing
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer text-sm font-semibold text-slate-600 hover:text-slate-900">
+                        <input type="checkbox" name="category" value="women's clothing" onchange="filterProducts()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500 cursor-pointer"> 
+                        Women's Clothing
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer text-sm font-semibold text-slate-600 hover:text-slate-900">
+                        <input type="checkbox" name="category" value="jewelery" onchange="filterProducts()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500 cursor-pointer"> 
+                        Jewelry
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer text-sm font-semibold text-slate-600 hover:text-slate-900">
+                        <input type="checkbox" name="category" value="electronics" onchange="filterProducts()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500 cursor-pointer"> 
+                        Electronics
+                    </label>
+                </div>
+            </div>
+
+            <!-- Brands (Mock) -->
+            <div class="space-y-3">
+                <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Brands</h5>
+                <div class="space-y-2.5">
+                    <label class="flex items-center gap-3 cursor-pointer text-sm font-semibold text-slate-600 hover:text-slate-900">
+                        <input type="checkbox" name="brand" value="aether" onchange="filterProducts()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500 cursor-pointer"> 
+                        Aether
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer text-sm font-semibold text-slate-600 hover:text-slate-900">
+                        <input type="checkbox" name="brand" value="zenith" onchange="filterProducts()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500 cursor-pointer"> 
+                        Zenith
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer text-sm font-semibold text-slate-600 hover:text-slate-900">
+                        <input type="checkbox" name="brand" value="modtech" onchange="filterProducts()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500 cursor-pointer"> 
+                        ModTech
+                    </label>
+                </div>
+            </div>
+
+            <!-- Price range slider -->
+            <div class="space-y-3">
+                <h5 class="text-xs font-bold uppercase tracking-wider text-slate-400">Price Range</h5>
+                <div class="space-y-2">
+                    <input type="range" id="price-range" min="0" max="1000" value="1000" oninput="updatePriceLabel(this.value); filterProducts();" 
+                           class="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+                        <span>$0</span>
+                        <span id="price-max-label">Up to $1000</span>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <section class="flex-1 space-y-6">
+        
+        <!-- Header Actions -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900">All Products</h2>
+                <p class="text-xs text-slate-400 font-semibold mt-1" id="product-count">Showing {{ item|length }} of {{ item|length }} items</p>
+            </div>
+            
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <!-- Search bar -->
+                <div class="relative w-full sm:w-60">
+                    <input type="text" id="search-input" onkeyup="filterProducts()" placeholder="Search products..." 
+                           class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Sort select -->
+                <div class="relative flex-shrink-0">
+                    <select id="sort-select" onchange="sortProducts()" 
+                            class="appearance-none bg-white border border-slate-200 text-slate-700 py-2 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm font-semibold cursor-pointer">
+                        <option value="default">Default Sort</option>
+                        <option value="low-high">Price: Low to High</option>
+                        <option value="high-low">Price: High to Low</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="product-grid">
+            {% for itm in item %}
+            <div class="product-card group flex flex-col bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                 data-category="{{ itm.category }}"
+                 data-price="{{ itm.price }}"
+                 data-title="{{ itm.title|lower }}"
+                 data-brand="{% if itm.id % 3 == 0 %}zenith{% elif itm.id % 2 == 0 %}aether{% else %}modtech{% endif %}">
+                
+                <!-- Image Wrapper -->
+                <div class="aspect-square bg-slate-50 relative overflow-hidden flex items-center justify-center p-6">
+                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="block w-full h-full">
+                        <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                    </a>
+                    <!-- Favorite Toggle Button -->
+                    <button type="button" 
+                            class="toggle-favorite absolute top-4 right-4 z-10 p-2 bg-white border border-slate-100 hover:border-slate-200 rounded-full shadow-sm transition-colors text-slate-400 hover:text-rose-600 animate-fade-in"
+                            data-product-id="{{ itm.id }}"
+                            title="Add to Favorites">
+                        <i class="{% if itm.id in fav_list %}fas fa-heart text-rose-600{% else %}far fa-heart{% endif %} text-sm"></i>
+                    </button>
+                </div>
+                
+                <!-- Details -->
+                <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                    <div class="space-y-1.5">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ itm.category }}</p>
+                        <h4 class="font-bold text-slate-800 text-sm sm:text-base line-clamp-1 group-hover:text-brand-600 transition-colors">
+                            <a href="{{ url_for('view_product', item_id=itm.id) }}">{{ itm.title }}</a>
+                        </h4>
+
+                    </div>
+
+                    <div class="flex items-baseline justify-between border-t border-slate-50 pt-4">
+                        <span class="text-lg font-bold text-slate-900">${{ itm.price }}</span>
+                    </div>
+                </div>
+
+                <!-- Add to Cart CTA -->
+                <div class="px-5 pb-5">
+                    <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST">
+                        <button type="submit" class="w-full py-2.5 bg-slate-950 text-white font-semibold text-xs rounded-xl hover:bg-brand-600 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+
+<!-- Interactive Client-side Filter Script -->
+<script>
+    function updatePriceLabel(val) {
+        document.getElementById('price-max-label').innerText = 'Up to $' + val;
+    }
+
+    function filterProducts() {
+        const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value);
+        const selectedBrands = Array.from(document.querySelectorAll('input[name="brand"]:checked')).map(el => el.value);
+        const maxPrice = parseFloat(document.getElementById('price-range').value);
+        const searchQuery = document.getElementById('search-input').value.toLowerCase();
+
+        const cards = document.querySelectorAll('.product-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const cat = card.getAttribute('data-category');
+            const price = parseFloat(card.getAttribute('data-price'));
+            const brand = card.getAttribute('data-brand');
+            const title = card.getAttribute('data-title');
+
+            const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(cat);
+            const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(brand);
+            const matchesPrice = price <= maxPrice;
+            const matchesSearch = title.includes(searchQuery);
+
+            if (matchesCategory && matchesBrand && matchesPrice && matchesSearch) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        document.getElementById('product-count').innerText = `Showing ${visibleCount} of ${cards.length} items`;
+    }
+
+    function sortProducts() {
+        const select = document.getElementById('sort-select');
+        const mode = select.value;
+        const grid = document.getElementById('product-grid');
+        const cards = Array.from(grid.querySelectorAll('.product-card'));
+
+        cards.sort((a, b) => {
+            const priceA = parseFloat(a.getAttribute('data-price'));
+            const priceB = parseFloat(b.getAttribute('data-price'));
+
+            if (mode === 'low-high') return priceA - priceB;
+            if (mode === 'high-low') return priceB - priceA;
+            return 0; // Default
+        });
+
+        cards.forEach(card => grid.appendChild(card));
+    }
+
+    function clearFilters() {
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        document.getElementById('price-range').value = 1000;
+        updatePriceLabel(1000);
+        document.getElementById('search-input').value = '';
+        document.getElementById('sort-select').value = 'default';
+        filterProducts();
+    }
+
+    // Auto-run filter based on URL query parameters
+    function initFilters() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        if (categoryParam) {
+            const checkboxes = document.querySelectorAll('input[name="category"]');
+            checkboxes.forEach(cb => {
+                if (categoryParam === 'fashion') {
+                    if (cb.value === "men's clothing" || cb.value === "women's clothing") {
+                        cb.checked = true;
+                    }
+                } else if (cb.value === categoryParam) {
+                    cb.checked = true;
+                }
+            });
+            filterProducts();
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', initFilters);
+    } else {
+        initFilters();
+    }
+</script>
+{% endblock %}

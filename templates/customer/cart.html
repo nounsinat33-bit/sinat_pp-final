@@ -1,0 +1,165 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    
+    <div class="flex items-center justify-between">
+        <a href="{{ url_for('products') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Continue Shopping
+        </a>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Shopping Cart</h1>
+    </div>
+
+    {% if cart_items %}
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+        
+        <!-- Cart Items List (Left Column) -->
+        <div class="w-full lg:w-2/3 bg-white border border-slate-100 rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-400 font-bold text-xs uppercase tracking-wider border-b border-slate-100">
+                            <th class="p-5 pl-6">Product</th>
+                            <th class="p-5">Price</th>
+                            <th class="p-5">Quantity</th>
+                            <th class="p-5">Total</th>
+                            <th class="p-5 pr-6 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                        {% for item in cart_items %}
+                        <tr>
+                            <!-- Product Info -->
+                            <td class="p-5 pl-6 flex items-center gap-4">
+                                <div class="w-16 h-16 bg-slate-50 border border-slate-100 rounded-xl p-2 flex items-center justify-center flex-shrink-0">
+                                    <img src="{{ item.product.image }}" alt="{{ item.product.title }}" class="max-h-full object-contain">
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="font-bold text-slate-800 line-clamp-1 max-w-[200px] sm:max-w-xs">
+                                        <a href="{{ url_for('view_product', item_id=item.product.id) }}" class="hover:text-brand-600 transition-colors">{{ item.product.title }}</a>
+                                    </h4>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ item.product.category }}</p>
+                                </div>
+                            </td>
+
+                            <!-- Price -->
+                            <td class="p-5 text-slate-900 font-bold">${{ "%.2f"|format(item.product.price) }}</td>
+
+                            <!-- Quantity -->
+                            <td class="p-5">
+                                <div class="flex items-center border border-slate-200 rounded-xl px-2 py-1 bg-white w-fit">
+                                    <form action="{{ url_for('decrease_cart', item_id=item.product.id) }}" method="POST" class="inline">
+                                        <button type="submit" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors font-bold">-</button>
+                                    </form>
+                                    <span class="w-8 text-center text-xs font-bold text-slate-900">{{ item.quantity }}</span>
+                                    <form action="{{ url_for('increase_cart', item_id=item.product.id) }}" method="POST" class="inline">
+                                        <button type="submit" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors font-bold">+</button>
+                                    </form>
+                                </div>
+                            </td>
+
+                            <!-- Total -->
+                            <td class="p-5 text-slate-900 font-bold">${{ "%.2f"|format(item.item_total) }}</td>
+
+                            <!-- Remove Button -->
+                            <td class="p-5 pr-6 text-right">
+                                <form action="{{ url_for('remove_from_cart', item_id=item.product.id) }}" method="POST" class="inline">
+                                    <button onclick="return confirm('Remove this item from your cart?');" type="submit" 
+                                            class="p-2 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-600 transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Bottom Options -->
+            <div class="p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                <a href="{{ url_for('clear_cart') }}" 
+                   onclick="return confirm('Empty your shopping cart?');"
+                   class="text-xs font-bold text-rose-600 hover:text-rose-700 transition-colors flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Empty Shopping Cart
+                </a>
+            </div>
+        </div>
+
+        <!-- Order Summary Card (Right Column) -->
+        <div class="w-full lg:w-1/3 space-y-6">
+            
+            <!-- Summary Info -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 space-y-4">
+                <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Order Summary</h3>
+                
+                <div class="space-y-3.5 text-sm font-semibold text-slate-500">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span class="text-slate-900">${{ "%.2f"|format(total_price) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Shipping</span>
+                        <span class="text-emerald-600">Free Shipping</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Estimated Tax</span>
+                        <span class="text-slate-900">$0.00</span>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100 my-4" />
+
+                <div class="flex justify-between text-base font-bold text-slate-900">
+                    <span>Total</span>
+                    <span>${{ "%.2f"|format(total_price) }}</span>
+                </div>
+
+                <a href="{{ url_for('checkout') }}" class="w-full py-4 bg-slate-950 hover:bg-slate-900 text-white font-semibold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm mt-6">
+                    Proceed to Checkout
+                </a>
+            </div>
+
+            <!-- Promo Code Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Promo Code</h4>
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Enter code" 
+                           class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <button onclick="alert('Promo code applied!');" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors">
+                        Apply
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {% else %}
+    <!-- Empty Cart state -->
+    <div class="bg-white border border-slate-100 rounded-3xl p-12 text-center max-w-lg mx-auto space-y-6">
+        <span class="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+        </span>
+        <div class="space-y-2">
+            <h2 class="text-xl font-bold text-slate-900">Your shopping cart is empty</h2>
+            <p class="text-sm text-slate-400">Looks like you haven't added any products to your cart yet.</p>
+        </div>
+        <a href="{{ url_for('products') }}" class="inline-flex px-6 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm shadow-brand-100">
+            Shop Our Products
+        </a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

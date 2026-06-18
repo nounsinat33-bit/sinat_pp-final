@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sinat Shop | Premium E-Commerce</title>
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS Script CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#b9defe',
+                            300: '#7cc2fd',
+                            400: '#36a2fa',
+                            500: '#0c85eb',
+                            600: '#0066cc',
+                            700: '#0052a3',
+                            800: '#00458a',
+                            900: '#063b70',
+                            950: '#0b1329',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../.././static/css/style.css">
+</head>
+<body class="flex flex-col min-h-full bg-slate-50 text-slate-800 antialiased font-sans">
+
+{% include 'share/header.html' %}
+
+    <!-- Pushes footer down on empty or short pages -->
+    <main class="flex-grow">
+        {% block content %}
+        {% endblock %}
+    </main>
+    {% include 'share/footer.html' %}
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <script>
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-900 text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-lg flex items-center gap-2 animate-fade-in-up pointer-events-auto transition-all duration-300';
+            toast.innerHTML = `
+                <svg class="w-4 h-4 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    toast.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.action && form.action.includes('/add_to_cart/')) {
+                e.preventDefault();
+                
+                // Disable the submit button to prevent double-clicks
+                const button = form.querySelector('button[type="submit"]');
+                if (button) button.disabled = true;
+
+                fetch(form.action + '?ajax=1', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update the badge
+                        const container = document.getElementById('cart-badge-container');
+                        if (container) {
+                            container.innerHTML = `
+                                <span id="cart-badge" class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                                    ${data.cart_count}
+                                </span>
+                            `;
+                        }
+                        
+                        // Show a beautiful Toast notification
+                        showToast("Product successfully added to cart!");
+                    }
+                    if (button) button.disabled = false;
+                })
+                .catch(err => {
+                    console.error('Error adding to cart:', err);
+                    if (button) button.disabled = false;
+                    // Fallback: standard submit if fetch fails
+                    form.submit();
+                });
+            }
+        });
+
+        // Toggle favorite via AJAX
+        document.addEventListener('click', function(e) {
+            const button = e.target.closest('.toggle-favorite');
+            if (button) {
+                e.preventDefault();
+                const productId = button.getAttribute('data-product-id');
+                if (!productId) return;
+                
+                button.disabled = true;
+                
+                fetch(`/add_to_favorites/${productId}?ajax=1`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update all heart buttons representing this product ID
+                        const heartButtons = document.querySelectorAll(`.toggle-favorite[data-product-id="${productId}"]`);
+                        heartButtons.forEach(btn => {
+                            const icon = btn.querySelector('i');
+                            if (icon) {
+                                if (data.action === 'added') {
+                                    icon.className = 'fas fa-heart text-rose-600';
+                                } else {
+                                    icon.className = 'far fa-heart';
+                                }
+                            }
+                        });
+                        
+                        // Update the badge
+                        const container = document.getElementById('fav-badge-container');
+                        if (container) {
+                            if (data.fav_count > 0) {
+                                container.innerHTML = `
+                                    <span id="fav-badge" class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                                        ${data.fav_count}
+                                    </span>
+                                `;
+                            } else {
+                                container.innerHTML = '';
+                            }
+                        }
+                        
+                        showToast(data.message);
+                    }
+                    button.disabled = false;
+                })
+                .catch(err => {
+                    console.error('Error toggling favorite:', err);
+                    button.disabled = false;
+                });
+            }
+        });
+
+        // Remove favorite specifically for the wishlist page via AJAX
+        document.addEventListener('click', function(e) {
+            const button = e.target.closest('.remove-favorite');
+            if (button) {
+                e.preventDefault();
+                const productId = button.getAttribute('data-product-id');
+                if (!productId) return;
+                
+                button.disabled = true;
+                
+                fetch(`/remove_from_favorites/${productId}?ajax=1`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Find the product card on the wishlist page and remove it smoothly
+                        const card = button.closest('.product-favorite-card');
+                        if (card) {
+                            card.classList.add('scale-95', 'opacity-0');
+                            setTimeout(() => {
+                                card.remove();
+                                
+                                // Check if the container is now empty
+                                const container = document.getElementById('wishlist-container');
+                                if (container && container.querySelectorAll('.product-favorite-card').length === 0) {
+                                    const emptyState = document.getElementById('empty-wishlist');
+                                    if (emptyState) {
+                                        emptyState.classList.remove('hidden');
+                                    }
+                                }
+                            }, 300);
+                        }
+                        
+                        // Update the badge
+                        const container = document.getElementById('fav-badge-container');
+                        if (container) {
+                            if (data.fav_count > 0) {
+                                container.innerHTML = `
+                                    <span id="fav-badge" class="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white ring-2 ring-white animate-pulse">
+                                        ${data.fav_count}
+                                    </span>
+                                `;
+                            } else {
+                                container.innerHTML = '';
+                            }
+                        }
+                        
+                        showToast(data.message);
+                    }
+                    button.disabled = false;
+                })
+                .catch(err => {
+                    console.error('Error removing favorite:', err);
+                    button.disabled = false;
+                });
+            }
+        });
+    </script>
+</body>
+</html>

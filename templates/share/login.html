@@ -1,0 +1,165 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 bg-slate-50">
+    <div class="max-w-md w-full space-y-8 bg-white p-8 border border-slate-100 rounded-2xl">
+        
+        <!-- Header Branding Block -->
+        <div class="text-center">
+            <a href="{{ url_for('home') }}" class="inline-flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 mb-6">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SINAT SHOP Logo" class="h-7 w-auto">
+                <span class="font-black text-xl tracking-wider text-slate-900 uppercase">SINAT SHOP</span>
+            </a>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
+            <p class="mt-2 text-sm text-slate-400">Please enter your details to sign in.</p>
+        </div>
+
+        {% if request.args.get('reset_success') %}
+        <div class="bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-xl p-4 text-xs font-semibold text-center animate-fade-in-up">
+            Password reset successfully! Please sign in with your new password.
+        </div>
+        {% endif %}
+
+        <!-- Core Authentication Form -->
+        <form action="{{ url_for('login') }}" method="POST" class="mt-8 space-y-6">
+            {% if error %}
+            <div class="bg-rose-50 border border-rose-100 text-rose-600 rounded-xl p-4 text-xs font-semibold text-center">
+                {{ error }}
+            </div>
+            {% endif %}
+            <div class="space-y-4">
+                <div>
+                    <label for="username" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                    <input type="text" id="username" name="username" placeholder="name@company.com" required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-400">Password</label>
+                        <button type="button" onclick="openForgotModal()" class="text-xs font-semibold text-brand-600 hover:text-brand-700 focus:outline-none">Forgot Password?</button>
+                    </div>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-sm transition-all">
+                </div>
+            </div>
+
+            <!-- Optional Remember Utility Toggle -->
+            <div class="flex items-center">
+                <input type="checkbox" id="remember" name="remember" 
+                       class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-slate-200 rounded">
+                <label for="remember" class="ml-2 block text-sm font-semibold text-slate-500">Keep me logged in</label>
+            </div>
+
+            <div>
+                <button type="submit" 
+                        class="w-full flex justify-center py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-slate-950 hover:bg-slate-900 focus:outline-none transition-colors">
+                    Login
+                </button>
+            </div>
+        </form>
+
+        <!-- Structural Redirection Footer -->
+        <div class="text-center pt-2">
+            <p class="text-sm text-slate-400 font-medium">
+                Don't have an account? 
+                <a href="{{ url_for('register') }}" class="font-semibold text-brand-600 hover:text-brand-700">Create Account</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Forgot Password Pop-up Modal -->
+<div id="forgot-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeForgotModal()"></div>
+    
+    <!-- Modal Body -->
+    <div class="relative bg-white border border-slate-100 rounded-3xl w-full max-w-md p-6 md:p-8 mx-4 shadow-xl z-10 transition-all duration-300">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900">Forgot Password</h3>
+            <button onclick="closeForgotModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="mt-6 space-y-4">
+            <div id="forgot-input-container" class="space-y-4">
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    Enter your email address and we'll generate a password reset link for you.
+                </p>
+                <div>
+                    <label for="forgot-email" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                    <input type="email" id="forgot-email" placeholder="name@yourwebsite.com" required
+                           class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                </div>
+                <button onclick="submitForgotEmail()" 
+                        class="w-full py-3.5 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-slate-950 hover:bg-slate-900 transition-all">
+                    Generate Reset Link
+                </button>
+            </div>
+            
+            <!-- Success Link State -->
+            <div id="forgot-success-container" class="hidden space-y-4 text-center">
+                <div class="flex items-center justify-center w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full mx-auto">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Reset link generated successfully! You can copy or click the link below to reset your password:
+                </p>
+                <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-xl break-all">
+                    <a id="generated-reset-link" href="#" class="text-xs font-semibold text-brand-600 hover:text-brand-700 underline"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openForgotModal() {
+        const modal = document.getElementById('forgot-modal');
+        const inputContainer = document.getElementById('forgot-input-container');
+        const successContainer = document.getElementById('forgot-success-container');
+        const emailInput = document.getElementById('forgot-email');
+        
+        if (emailInput) emailInput.value = '';
+        if (inputContainer) inputContainer.classList.remove('hidden');
+        if (successContainer) successContainer.classList.add('hidden');
+        if (modal) modal.classList.remove('hidden');
+    }
+    
+    function closeForgotModal() {
+        const modal = document.getElementById('forgot-modal');
+        if (modal) modal.classList.add('hidden');
+    }
+    
+    function submitForgotEmail() {
+        const emailInput = document.getElementById('forgot-email');
+        const email = emailInput ? emailInput.value.trim() : '';
+        
+        if (!email) {
+            alert('Please enter a valid email address.');
+            return;
+        }
+        
+        const inputContainer = document.getElementById('forgot-input-container');
+        const successContainer = document.getElementById('forgot-success-container');
+        const linkElem = document.getElementById('generated-reset-link');
+        
+        const resetLink = window.location.origin + '/reset_password?email=' + encodeURIComponent(email);
+        
+        if (linkElem) {
+            linkElem.href = resetLink;
+            linkElem.textContent = resetLink;
+        }
+        
+        if (inputContainer) inputContainer.classList.add('hidden');
+        if (successContainer) successContainer.classList.remove('hidden');
+    }
+</script>
+{% endblock %}

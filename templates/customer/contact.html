@@ -1,0 +1,144 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    
+    <div class="space-y-2 text-center max-w-2xl mx-auto">
+        <h1 class="text-3xl font-bold tracking-tight text-slate-900">Get in Touch</h1>
+        <p class="text-sm text-slate-400 font-semibold leading-relaxed">
+            We're here to help. Whether you have questions about our products, need assistance with an order, or just want to share feedback, our team is ready to connect.
+        </p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+        
+        <!-- Contact Form (Left Column) -->
+        <div class="w-full lg:w-2/3 bg-white border border-slate-100 rounded-2xl p-6 md:p-8">
+            <form action="#" method="POST" class="space-y-6" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="name" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Full Name</label>
+                        <input type="text" id="name" placeholder="John Doe" required
+                               class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                        <input type="email" id="email" placeholder="john@example.com" required
+                               class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <label for="subject" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Subject</label>
+                    <select id="subject" 
+                            class="appearance-none bg-white border border-slate-200 text-slate-700 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm font-semibold cursor-pointer w-full">
+                        <option>General Inquiry</option>
+                        <option>Order Support</option>
+                        <option>Returns & Exchanges</option>
+                        <option>Other</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-6 text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="message" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Message</label>
+                    <textarea id="message" rows="5" placeholder="How can we help you?" required
+                              class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all resize-none"></textarea>
+                </div>
+
+                <button type="submit" 
+                        class="px-6 py-3.5 bg-slate-950 hover:bg-slate-900 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm">
+                    Send Message
+                </button>
+            </form>
+        </div>
+
+        <!-- Contact Info & Map (Right Column) -->
+        <div class="w-full lg:w-1/3 space-y-6">
+            
+            <!-- Contact Cards -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 space-y-6">
+                <!-- Info 1 -->
+                <div class="flex items-start gap-4">
+                    <span class="p-2.5 bg-brand-50 text-brand-600 rounded-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Email Us</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                            <a href="mailto:support@sinatshop.com" class="hover:text-brand-600">support@sinatshop.com</a><br>
+                            <a href="mailto:orders@sinatshop.com" class="hover:text-brand-600">orders@sinatshop.com</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Info 2 -->
+                <div class="flex items-start gap-4">
+                    <span class="p-2.5 bg-brand-50 text-brand-600 rounded-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                        </svg>
+                    </span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Call Us</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                            +855 12 345 678<br>
+                            <span class="text-slate-400 font-semibold">Mon-Fri 8am - 5pm ICT</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Info 3 -->
+                <div class="flex items-start gap-4">
+                    <span class="p-2.5 bg-brand-50 text-brand-600 rounded-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 text-sm">Find Our Studio</h4>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">
+                            #123, Street 271<br>Phnom Penh, Cambodia
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mini Map Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden aspect-[4/3] shadow-sm relative z-0">
+                <div id="contact-map" class="w-full h-full"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Phnom Penh coordinates: 11.5564, 104.9282
+        const map = L.map('contact-map', {
+            scrollWheelZoom: false
+        }).setView([11.5564, 104.9282], 14);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        L.marker([11.5564, 104.9282]).addTo(map)
+            .bindPopup('<b>Sinat Shop Studio</b><br>#123, Street 271, Phnom Penh, Cambodia')
+            .openPopup();
+    });
+</script>
+{% endblock %}

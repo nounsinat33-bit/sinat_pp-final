@@ -1,0 +1,85 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    
+    <div class="flex items-center justify-between">
+        <a href="{{ url_for('products') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1.5 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Products
+        </a>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">My Wishlist</h1>
+    </div>
+
+    <!-- Empty Wishlist State -->
+    <div id="empty-wishlist" class="{% if favorite_items %}hidden{% endif %} text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-sm space-y-6 max-w-xl mx-auto animate-fade-in">
+        <div class="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto text-rose-500">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+        </div>
+        <div class="space-y-2">
+            <h2 class="text-xl font-bold text-slate-900">Your Wishlist is Empty</h2>
+            <p class="text-sm text-slate-500">Explore our premium catalog and save your favorite products here.</p>
+        </div>
+        <a href="{{ url_for('products') }}" class="inline-block px-6 py-3.5 bg-slate-950 hover:bg-slate-900 text-white font-semibold text-xs uppercase tracking-wider rounded-xl transition-all shadow-sm">
+            Discover Products
+        </a>
+    </div>
+
+    <!-- Favorites Grid -->
+    <div id="wishlist-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for itm in favorite_items %}
+        <div class="product-favorite-card group flex flex-col bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 relative">
+            
+            <!-- AJAX Remove Button -->
+            <button type="button" 
+                    class="remove-favorite absolute top-4 right-4 z-10 p-2 bg-white border border-slate-100 hover:border-slate-300 rounded-full text-slate-400 hover:text-rose-600 shadow-sm transition-all"
+                    data-product-id="{{ itm.id }}"
+                    title="Remove from favorites">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+
+            <!-- Image Wrapper -->
+            <div class="aspect-square bg-slate-50 relative overflow-hidden flex items-center justify-center p-6">
+                <a href="{{ url_for('view_product', item_id=itm.id) }}" class="block w-full h-full">
+                    <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                </a>
+            </div>
+            
+            <!-- Details -->
+            <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                <div class="space-y-1.5">
+                    <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ itm.category }}</p>
+                    <h4 class="font-bold text-slate-800 text-sm sm:text-base line-clamp-1 group-hover:text-brand-600 transition-colors">
+                        <a href="{{ url_for('view_product', item_id=itm.id) }}">{{ itm.title }}</a>
+                    </h4>
+
+                </div>
+
+                <div class="flex items-baseline justify-between border-t border-slate-50 pt-4">
+                    <span class="text-lg font-bold text-slate-900">${{ itm.price }}</span>
+                </div>
+            </div>
+
+            <!-- Add to Cart CTA -->
+            <div class="px-5 pb-5">
+                <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST">
+                    <button type="submit" class="w-full py-2.5 bg-slate-950 text-white font-semibold text-xs rounded-xl hover:bg-brand-600 transition-all flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Add to Cart
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

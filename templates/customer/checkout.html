@@ -1,0 +1,176 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    
+    <div class="flex items-center justify-between">
+        <a href="{{ url_for('cart') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Cart
+        </a>
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Checkout</h1>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+        
+        <!-- Left Column: Checkout Form & Payment -->
+        <div class="w-full lg:w-2/3 space-y-6">
+            
+            <!-- Form Section -->
+            <form id="shippingForm" action="{{ url_for('place_order') }}" method="POST">
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 md:p-8 space-y-6">
+                    <h3 class="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Shipping Address
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Full Name</label>
+                            <input type="text" name="buyer_name" placeholder="e.g. Sok Chan" required
+                                   value="{{ session.get('user', {}).get('full_name', '') }}"
+                                   class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Phone Number</label>
+                            <input type="tel" name="buyer_phone" placeholder="e.g. 012 345 678" required
+                                   class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                        <input type="email" name="buyer_email" placeholder="name@example.com" required
+                               value="{{ session.get('user', {}).get('email', '') }}"
+                               class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Delivery Address (City / Province)</label>
+                        <input type="text" name="buyer_address" placeholder="Street number, Sangkat, Khan..." required
+                               class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Order Notes (Optional)</label>
+                        <textarea name="order_notes" placeholder="Instructions for delivery driver..." rows="3"
+                                  class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all resize-none"></textarea>
+                    </div>
+                </div>
+            </form>
+
+            <!-- KHQR Payment Information Accordion Item -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 md:p-8 space-y-6">
+                <h3 class="text-lg font-bold text-slate-900 pb-3 border-b border-slate-100 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    Payment Information (KHQR Bakong)
+                </h3>
+
+                <div class="flex flex-col md:flex-row items-center gap-8 bg-slate-50 rounded-2xl p-6 border border-slate-100">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex-shrink-0">
+                        <!-- Bakong QR Code API -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=KHQR_MOCK_PAYMENT_TOTAL_{{ total_price }}" 
+                             alt="KHQR Code" class="w-36 h-36 object-contain">
+                    </div>
+                    
+                    <div class="space-y-3 text-center md:text-left">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-600 border border-brand-100">
+                            KHQR MERCHANT
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm">SINAT SHOP CO., LTD.</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed max-w-xs">
+                            Scan this mock Bakong QR code with any mobile banking app in Cambodia to complete payment.
+                        </p>
+                        <div class="text-lg font-black text-slate-900 pt-1">
+                            Amount: ${{ "%.2f"|format(total_price) }} USD
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div class="w-full lg:w-1/3 space-y-6">
+            
+            <!-- Summary Info -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 space-y-6">
+                <h3 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3">Order Summary</h3>
+                
+                <!-- Items list in Checkout -->
+                <div class="divide-y divide-slate-100 max-h-60 overflow-y-auto pr-1">
+                    {% for item in cart_items %}
+                    <div class="flex items-center gap-4 py-3 first:pt-0 last:pb-0">
+                        <div class="w-12 h-12 bg-slate-50 border border-slate-100 rounded-lg p-1.5 flex items-center justify-center flex-shrink-0">
+                            <img src="{{ item.product.image }}" alt="{{ item.product.title }}" class="max-h-full object-contain">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-slate-800 text-xs truncate">{{ item.product.title }}</h4>
+                            <p class="text-[10px] text-slate-400 font-semibold">Qty: {{ item.quantity }}</p>
+                        </div>
+                        <div class="text-xs font-bold text-slate-900">
+                            ${{ "%.2f"|format(item.item_total) }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <hr class="border-slate-100" />
+
+                <div class="space-y-3.5 text-xs font-semibold text-slate-500">
+                    <div class="flex justify-between">
+                        <span>Subtotal</span>
+                        <span class="text-slate-900">${{ "%.2f"|format(total_price) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Shipping</span>
+                        <span class="text-emerald-600">Free Shipping</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Estimated Tax</span>
+                        <span class="text-slate-900">$0.00</span>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100" />
+
+                <div class="flex justify-between text-base font-bold text-slate-900">
+                    <span>Total</span>
+                    <span>${{ "%.2f"|format(total_price) }}</span>
+                </div>
+
+                <!-- Form Submit action -->
+                <button type="submit" form="shippingForm"
+                        class="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl transition-colors flex items-center justify-center gap-2 shadow-sm shadow-brand-100">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Place Order & Pay
+                </button>
+            </div>
+
+            <!-- Promotion Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Promo Code</h4>
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Enter code" 
+                           class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl text-sm placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <button onclick="alert('Promo code applied!');" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-xl transition-colors">
+                        Apply
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

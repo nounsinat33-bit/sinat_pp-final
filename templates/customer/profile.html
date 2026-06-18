@@ -1,0 +1,1610 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col lg:flex-row gap-8">
+        
+        <!-- Left Sidebar Navigation -->
+        <aside class="w-full lg:w-1/4 flex-shrink-0">
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 space-y-2">
+                <div class="text-xs font-bold uppercase tracking-wider text-slate-400 px-3 mb-4">Account Menu</div>
+                
+                <a id="tab-nav-personal" href="#" onclick="switchTab('personal', event)" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold bg-brand-50 text-brand-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                    Personal Info
+                </a>
+                <a id="tab-nav-settings" href="#" onclick="switchTab('settings', event)" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Account Settings
+                </a>
+                <a id="tab-nav-addresses" href="#" onclick="switchTab('addresses', event)" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                    Addresses
+                </a>
+                <a id="tab-nav-payment" href="#" onclick="switchTab('payment', event)" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                    Payment Methods
+                </a>
+                <hr class="border-slate-100 my-4" />
+                <a href="{{ url_for('logout') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-rose-600 hover:bg-rose-50 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="w-full lg:w-3/4 space-y-6">
+            
+            <!-- User Header Card -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-5 text-center md:text-left">
+                    <div class="relative group cursor-pointer" onclick="document.getElementById('profile-pic-input').click()">
+                        <div id="avatar-container" class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center border-2 border-brand-50 overflow-hidden group-hover:opacity-85 transition-opacity">
+                            {% if session.get('user', {}).get('profile_pic') %}
+                            <img id="avatar-preview" src="{{ session['user']['profile_pic'] }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <span id="avatar-placeholder" class="text-slate-400">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"></path>
+                                </svg>
+                            </span>
+                            <img id="avatar-preview" src="" class="w-full h-full object-cover hidden">
+                            {% endif %}
+                        </div>
+                        <button type="button" class="absolute bottom-0 right-0 p-1.5 bg-white border border-slate-100 rounded-full text-slate-500 hover:text-brand-600 shadow-sm pointer-events-none">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <input type="file" id="profile-pic-input" accept="image/*" class="hidden" onchange="uploadProfilePic(this)">
+                    <div>
+                        <div class="flex flex-col md:flex-row items-center gap-2 mb-1.5">
+                            <h2 id="profile-display-name" class="text-2xl font-bold text-slate-900">{{ session.get('user', {}).get('full_name', 'Alexander Sterling') }}</h2>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-50 text-brand-600">
+                                Premium Member
+                            </span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-2 font-medium">Member since {{ member_since }}</p>
+                        <div class="flex flex-col sm:flex-row items-center gap-4 text-sm text-slate-500">
+                            <span class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <span id="profile-display-email">{{ session.get('user', {}).get('email', 'alex.sterling@example.com') }}</span>
+                            </span>
+                            <span class="hidden sm:inline text-slate-200">|</span>
+                            <span class="flex items-center gap-1.5">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                </svg>
+                                <span id="profile-display-phone">{{ session.get('user', {}).get('phone', '+855 12 345 678') }}</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <button id="edit-profile-btn" class="px-5 py-2.5 border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center gap-2 self-stretch md:self-auto justify-center">
+                    Edit Profile
+                </button>
+            </div>
+
+            <!-- Personal Info Section Wrapper -->
+            <div id="section-personal-info" class="space-y-6">
+                <!-- Dashboard Stats Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <!-- Stat 1 -->
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Spent</p>
+                        <h4 class="text-2xl font-bold text-slate-900">${{ "{:,.2f}".format(total_spent) }}</h4>
+                    </div>
+                    <span class="p-3 bg-brand-50 rounded-xl text-brand-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </span>
+                </div>
+                <!-- Stat 2 -->
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Active Orders</p>
+                        <h4 class="text-2xl font-bold text-slate-900">{{ "{:02d}".format(active_orders) }}</h4>
+                    </div>
+                    <span class="p-3 bg-brand-50 rounded-xl text-brand-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                        </svg>
+                    </span>
+                </div>
+                <!-- Stat 3 -->
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Reward Points</p>
+                        <h4 class="text-2xl font-bold text-slate-900">{{ "{:,}".format(reward_points) }} pts</h4>
+                    </div>
+                    <span class="p-3 bg-brand-50 rounded-xl text-brand-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Recent Orders Section -->
+            <div class="bg-white border border-slate-100 rounded-2xl overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-slate-900">Recent Orders</h3>
+                    <a href="#" class="text-sm font-semibold text-brand-600 hover:text-brand-700">View All</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-400 font-semibold text-xs uppercase tracking-wider">
+                                <th class="p-4 pl-6">Order ID</th>
+                                <th class="p-4">Date</th>
+                                <th class="p-4">Amount</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 pr-6 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                            {% for order in orders %}
+                            <tr>
+                                <td class="p-4 pl-6 font-bold text-slate-900">{{ order.order_id }}</td>
+                                <td class="p-4 text-slate-400">{{ order.date }}</td>
+                                <td class="p-4">${{ "{:,.2f}".format(order.amount) }}</td>
+                                <td class="p-4">
+                                    {% if order.status == 'Delivered' %}
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Delivered
+                                    </span>
+                                    {% elif order.status == 'In Transit' %}
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-600">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span> In Transit
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-600">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span> {{ order.status }}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-4 pr-6 text-right">
+                                    <button class="p-2 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-900 transition-colors" title="View details">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-slate-400 text-sm">
+                                    No orders placed yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bottom Info Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: Security -->
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 flex items-start gap-4">
+                    <span class="p-2.5 bg-brand-50 rounded-xl text-brand-600 flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 mb-1">Security Checkup</h4>
+                        <p class="text-sm text-slate-500 mb-3 leading-relaxed">Update your password and enable two-factor authentication.</p>
+                        <a href="#" class="text-sm font-semibold text-brand-600 hover:text-brand-700">Setup Security &rarr;</a>
+                    </div>
+                </div>
+                <!-- Card 2: Support -->
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 flex items-start gap-4">
+                    <span class="p-2.5 bg-brand-50 rounded-xl text-brand-600 flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </span>
+                    <div>
+                        <h4 class="font-bold text-slate-900 mb-1">Support Center</h4>
+                        <p class="text-sm text-slate-500 mb-3 leading-relaxed">Need help with an order? Contact our 24/7 dedicated support team.</p>
+                        <a href="{{ url_for('contact') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-700">Contact Support &rarr;</a>
+                    </div>
+                </div>
+            </div>
+            <!-- End Personal Info Section Wrapper -->
+            </div>
+
+            <!-- Account Settings Section Wrapper -->
+            <div id="section-account-settings" class="space-y-6 hidden">
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 md:p-8 space-y-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-1">Account Settings</h3>
+                        <p class="text-sm text-slate-500">View and update your personal details and change your password.</p>
+                    </div>
+                    
+                    <hr class="border-slate-100" />
+                    
+                    <!-- Update Information Form -->
+                    <form id="tabInfoForm" onsubmit="submitTabInfo(event)" class="space-y-6">
+                        <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Personal Information
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Full Name</label>
+                                <input type="text" id="settings-full-name" required
+                                       value="{{ session.get('user', {}).get('full_name', '') }}"
+                                       class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                                <input type="email" id="settings-email" required
+                                       value="{{ session.get('user', {}).get('email', '') }}"
+                                       class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Phone Number</label>
+                                <div class="flex gap-2">
+                                    <select id="settings-phone-prefix" 
+                                            class="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                                        <option value="+855">KH (+855)</option>
+                                        <option value="+1">US (+1)</option>
+                                        <option value="+66">TH (+66)</option>
+                                        <option value="+84">VN (+84)</option>
+                                        <option value="+856">LA (+856)</option>
+                                    </select>
+                                    <input type="tel" id="settings-phone-local" required placeholder="12 345 678"
+                                           class="appearance-none rounded-xl relative block flex-1 px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="settings-info-error" class="text-xs font-semibold text-rose-600 hidden"></div>
+                        
+                        <div class="flex items-center">
+                            <button type="submit"
+                                    class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-brand-100">
+                                Save Information
+                            </button>
+                            <span id="autosave-status" class="text-xs text-slate-400 font-semibold transition-all duration-300 opacity-0 ml-3"></span>
+                        </div>
+                    </form>
+                    
+                    <hr class="border-slate-100 my-8" />
+                    
+                    <!-- Change Password Form -->
+                    <form id="tabPasswordForm" onsubmit="submitTabPassword(event)" class="space-y-6">
+                        <h4 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            Security & Password
+                        </h4>
+                        
+                        <div class="space-y-4 max-w-md">
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Current Password</label>
+                                <input type="password" id="settings-curr-pass" required placeholder="••••••••"
+                                       class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">New Password</label>
+                                <input type="password" id="settings-new-pass" required placeholder="••••••••"
+                                       class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Confirm New Password</label>
+                                <input type="password" id="settings-confirm-pass" required placeholder="••••••••"
+                                       class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                            </div>
+                        </div>
+                        
+                        <div id="settings-pass-error" class="text-xs font-semibold text-rose-600 hidden"></div>
+                        
+                        <div>
+                            <button type="submit"
+                                    class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-brand-100">
+                                Update Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Addresses Section Wrapper -->
+            <div id="section-addresses" class="space-y-6 hidden">
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 md:p-8 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-1">My Addresses</h3>
+                            <p class="text-sm text-slate-500">Manage your shipping and billing addresses for faster checkout.</p>
+                        </div>
+                        <button onclick="openAddressModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-brand-100 flex items-center gap-2 self-start sm:self-auto">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                            </svg>
+                            Add New Address
+                        </button>
+                    </div>
+                    
+                    <hr class="border-slate-100" />
+                    
+                    <div id="addresses-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Methods Section Wrapper -->
+            <div id="section-payment-methods" class="space-y-6 hidden">
+                <div class="bg-white border border-slate-100 rounded-2xl p-6 md:p-8 space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900 mb-1">Payment Methods</h3>
+                            <p class="text-sm text-slate-500">Manage your saved credit cards and electronic wallets.</p>
+                        </div>
+                        <button onclick="openPaymentModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-brand-100 flex items-center gap-2 self-start sm:self-auto">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                            </svg>
+                            Add Payment Method
+                        </button>
+                    </div>
+                    
+                    <hr class="border-slate-100" />
+                    
+                    <div id="payment-methods-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="edit-profile-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeEditModal()"></div>
+    <!-- Modal Body -->
+    <div class="relative bg-white border border-slate-100 rounded-2xl w-full max-w-md p-6 md:p-8 mx-4 shadow-xl animate-fade-in-up">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900">Edit Profile</h3>
+            <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form id="editProfileForm" onsubmit="submitEditProfile(event)" class="mt-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Full Name</label>
+                <input type="text" id="edit-full-name" required
+                       class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Email Address</label>
+                <input type="email" id="edit-email" required
+                       class="appearance-none rounded-xl relative block w-full px-4 py-3 border border-slate-200 placeholder-slate-400 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+            </div>
+            
+            <div id="edit-profile-error" class="text-xs font-semibold text-rose-600 hidden"></div>
+            
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeEditModal()"
+                        class="px-5 py-2.5 border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-brand-100 flex items-center gap-2">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Address Modal -->
+<div id="address-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closeAddressModal()"></div>
+    <!-- Modal Body -->
+    <div class="relative bg-white border border-slate-100 rounded-2xl w-full max-w-lg p-6 md:p-8 mx-4 shadow-xl animate-fade-in-up">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <h3 id="address-modal-title" class="text-lg font-bold text-slate-900">Add New Address</h3>
+            <button type="button" onclick="closeAddressModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form id="addressForm" onsubmit="submitAddressForm(event)" class="mt-6 space-y-4">
+            <input type="hidden" id="address-id">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Address Label</label>
+                    <select id="address-label" class="appearance-none rounded-xl border border-slate-200 bg-white w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                        <option value="Home">Home</option>
+                        <option value="Work">Work</option>
+                        <option value="Office">Office</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Recipient Full Name</label>
+                    <input type="text" id="address-recipient-name" required placeholder="Alice Smith"
+                           class="appearance-none rounded-xl border border-slate-200 w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Recipient Phone Number</label>
+                <div class="flex gap-2">
+                    <select id="address-phone-prefix" class="appearance-none rounded-xl border border-slate-200 bg-white px-3 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                        <option value="+855">KH (+855)</option>
+                        <option value="+1">US (+1)</option>
+                        <option value="+66">TH (+66)</option>
+                        <option value="+84">VN (+84)</option>
+                        <option value="+856">LA (+856)</option>
+                    </select>
+                    <input type="tel" id="address-phone-local" required placeholder="12 345 678"
+                           class="appearance-none rounded-xl border border-slate-200 flex-1 px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Street Address</label>
+                <input type="text" id="address-street" required placeholder="#123, Street 271, Sangkat Boeung Keng Kang III"
+                       class="appearance-none rounded-xl border border-slate-200 w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">City</label>
+                    <input type="text" id="address-city" required placeholder="Phnom Penh"
+                           class="appearance-none rounded-xl border border-slate-200 w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Country</label>
+                    <input type="text" id="address-country" value="Cambodia" readonly
+                           class="appearance-none rounded-xl border border-slate-200 bg-slate-50 w-full px-4 py-3 text-slate-400 text-sm focus:outline-none select-none">
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 py-2">
+                <input type="checkbox" id="address-is-default" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4">
+                <label for="address-is-default" class="text-sm font-semibold text-slate-700 select-none cursor-pointer">Set as default shipping address</label>
+            </div>
+            
+            <div id="address-error" class="text-xs font-semibold text-rose-600 hidden"></div>
+            
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closeAddressModal()"
+                        class="px-5 py-2.5 border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-brand-100">
+                    Save Address
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Payment Method Modal -->
+<div id="payment-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="closePaymentModal()"></div>
+    <!-- Modal Body -->
+    <div class="relative bg-white border border-slate-100 rounded-2xl w-full max-w-lg p-6 md:p-8 mx-4 shadow-xl animate-fade-in-up">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900">Add Payment Method</h3>
+            <button type="button" onclick="closePaymentModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Toggle Tabs inside modal -->
+        <div class="flex border-b border-slate-100 mt-6">
+            <button onclick="togglePaymentType('card')" id="pay-tab-card" class="flex-1 pb-3 text-sm font-bold border-b-2 border-brand-600 text-brand-600 transition-colors focus:outline-none">
+                Credit/Debit Card
+            </button>
+            <button onclick="togglePaymentType('bakong')" id="pay-tab-bakong" class="flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-colors focus:outline-none">
+                Bakong KHQR Wallet
+            </button>
+        </div>
+        
+        <form id="paymentForm" onsubmit="submitPaymentForm(event)" class="mt-6 space-y-4">
+            <input type="hidden" id="payment-type" value="card">
+            
+            <!-- Card Form Fields -->
+            <div id="card-fields" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Card Brand</label>
+                        <select id="payment-card-brand" class="appearance-none rounded-xl border border-slate-200 bg-white w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all">
+                            <option value="Visa">Visa</option>
+                            <option value="Mastercard">Mastercard</option>
+                            <option value="JCB">JCB</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Cardholder Name</label>
+                        <input type="text" id="payment-cardholder-name" placeholder="ALICE SMITH"
+                               class="appearance-none rounded-xl border border-slate-200 w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all uppercase">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Card Number</label>
+                    <input type="text" id="payment-card-number" placeholder="4000 1234 5678 9010" maxlength="19"
+                           class="appearance-none rounded-xl border border-slate-200 w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all font-mono">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Expiration Date</label>
+                        <input type="text" id="payment-expiry" placeholder="MM/YY" maxlength="5"
+                               class="appearance-none rounded-xl border border-slate-200 w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">CVV/CVC</label>
+                        <input type="password" id="payment-cvv" placeholder="•••" maxlength="4"
+                               class="appearance-none rounded-xl border border-slate-200 w-full px-4 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all font-mono">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bakong Form Fields (Hidden by default) -->
+            <div id="bakong-fields" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">Bakong Account ID</label>
+                    <div class="relative flex items-center">
+                        <input type="text" id="payment-bakong-account" placeholder="alice_smith"
+                               class="appearance-none rounded-xl border border-slate-200 w-full pl-4 pr-24 py-3 text-slate-950 focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm transition-all font-mono">
+                        <span class="absolute right-4 text-sm font-semibold text-slate-400 select-none">@bakong</span>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-1.5">Enter your unique Bakong peer ID to link your KHQR wallet.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 py-2">
+                <input type="checkbox" id="payment-is-default" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4">
+                <label for="payment-is-default" class="text-sm font-semibold text-slate-700 select-none cursor-pointer">Set as default payment method</label>
+            </div>
+            
+            <div id="payment-error" class="text-xs font-semibold text-rose-600 hidden"></div>
+            
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                <button type="button" onclick="closePaymentModal()"
+                        class="px-5 py-2.5 border border-slate-200 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm shadow-brand-100">
+                    Save Payment Method
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Edit Profile Modal functions
+const editModal = document.getElementById('edit-profile-modal');
+const editBtn = document.getElementById('edit-profile-btn');
+const displayName = document.getElementById('profile-display-name');
+const displayEmail = document.getElementById('profile-display-email');
+const editFullNameInput = document.getElementById('edit-full-name');
+const editEmailInput = document.getElementById('edit-email');
+const editErrorDiv = document.getElementById('edit-profile-error');
+
+// Phone Prefix & Local number initialization
+function initializePhoneInputs(phoneStr) {
+    const prefixSelect = document.getElementById('settings-phone-prefix');
+    const localInput = document.getElementById('settings-phone-local');
+    if (!prefixSelect || !localInput) return;
+    
+    const prefixes = ['+855', '+1', '+66', '+84', '+856'];
+    let matchedPrefix = '+855'; // default
+    let localNum = phoneStr;
+    
+    for (const p of prefixes) {
+        if (phoneStr.startsWith(p)) {
+            matchedPrefix = p;
+            localNum = phoneStr.substring(p.length).trim();
+            break;
+        }
+    }
+    
+    prefixSelect.value = matchedPrefix;
+    localInput.value = localNum;
+}
+
+// Initialize on page load
+const displayPhone = document.getElementById('profile-display-phone');
+if (displayPhone) {
+    initializePhoneInputs(displayPhone.textContent.trim());
+}
+
+// Tab switching logic
+function switchTab(tabName, event) {
+    if (event) event.preventDefault();
+    
+    const tabs = ['personal', 'settings', 'addresses', 'payment'];
+    
+    const navMap = {
+        'personal': document.getElementById('tab-nav-personal'),
+        'settings': document.getElementById('tab-nav-settings'),
+        'addresses': document.getElementById('tab-nav-addresses'),
+        'payment': document.getElementById('tab-nav-payment')
+    };
+    
+    const secMap = {
+        'personal': document.getElementById('section-personal-info'),
+        'settings': document.getElementById('section-account-settings'),
+        'addresses': document.getElementById('section-addresses'),
+        'payment': document.getElementById('section-payment-methods')
+    };
+    
+    tabs.forEach(t => {
+        const nav = navMap[t];
+        const sec = secMap[t];
+        
+        if (t === tabName) {
+            if (nav) {
+                nav.classList.remove('font-medium', 'text-slate-600', 'hover:bg-slate-50', 'hover:text-slate-900');
+                nav.classList.add('font-semibold', 'bg-brand-50', 'text-brand-600');
+            }
+            if (sec) {
+                sec.classList.remove('hidden');
+            }
+        } else {
+            if (nav) {
+                nav.classList.remove('font-semibold', 'bg-brand-50', 'text-brand-600');
+                nav.classList.add('font-medium', 'text-slate-600', 'hover:bg-slate-50', 'hover:text-slate-900');
+            }
+            if (sec) {
+                sec.classList.add('hidden');
+            }
+        }
+    });
+}
+
+// Edit Profile Button -> Switches to settings tab and focuses name input
+if (editBtn) {
+    editBtn.addEventListener('click', (e) => {
+        switchTab('settings', e);
+        if (displayPhone) {
+            initializePhoneInputs(displayPhone.textContent.trim());
+        }
+        const nameInput = document.getElementById('settings-full-name');
+        if (nameInput) nameInput.focus();
+    });
+}
+
+// Edit Profile Modal functions (Fallback keeping current code intact)
+if (editModal) {
+    // Left empty since Edit Profile button now navigates directly to Settings Tab
+}
+
+function closeEditModal() {
+    if (editModal) {
+        editModal.classList.add('hidden');
+    }
+}
+
+function submitEditProfile(event) {
+    event.preventDefault();
+    const fullName = editFullNameInput.value.trim();
+    const email = editEmailInput.value.trim();
+    if (!fullName || !email) return;
+    
+    fetch('/update_profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ full_name: fullName, email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            if (displayName) displayName.textContent = fullName;
+            if (displayEmail) displayEmail.textContent = email;
+            
+            // Sync tab inputs
+            const settingsName = document.getElementById('settings-full-name');
+            const settingsEmail = document.getElementById('settings-email');
+            if (settingsName) settingsName.value = fullName;
+            if (settingsEmail) settingsEmail.value = email;
+            
+            showToast("Profile updated successfully!");
+            closeEditModal();
+        }
+    });
+}
+
+// Update settings tab information
+function submitTabInfo(event) {
+    event.preventDefault();
+    const nameInput = document.getElementById('settings-full-name');
+    const emailInput = document.getElementById('settings-email');
+    const prefixSelect = document.getElementById('settings-phone-prefix');
+    const localInput = document.getElementById('settings-phone-local');
+    const errorDiv = document.getElementById('settings-info-error');
+    
+    const fullName = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const phone = (prefixSelect.value + " " + localInput.value.trim()).trim();
+    
+    if (errorDiv) {
+        errorDiv.classList.add('hidden');
+        errorDiv.textContent = '';
+    }
+    
+    const saveBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = 'Saving...';
+    
+    fetch('/update_profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ full_name: fullName, email: email, phone: phone })
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(({ status, data }) => {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+        
+        if (status === 200 && data.status === 'success') {
+            if (displayName) displayName.textContent = fullName;
+            if (displayEmail) displayEmail.textContent = email;
+            
+            const displayPhone = document.getElementById('profile-display-phone');
+            if (displayPhone) displayPhone.textContent = phone;
+            
+            // Sync modal inputs too
+            if (editFullNameInput) editFullNameInput.value = fullName;
+            if (editEmailInput) editEmailInput.value = email;
+            
+            showToast("Information updated successfully!");
+        } else {
+            if (errorDiv) {
+                errorDiv.textContent = data.message || "Failed to update profile details.";
+                errorDiv.classList.remove('hidden');
+            }
+        }
+    })
+    .catch(err => {
+        console.error('Error updating profile:', err);
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+        if (errorDiv) {
+            errorDiv.textContent = "An error occurred while saving information.";
+            errorDiv.classList.remove('hidden');
+        }
+    });
+}
+
+// Update settings tab password
+function submitTabPassword(event) {
+    event.preventDefault();
+    const currPassInput = document.getElementById('settings-curr-pass');
+    const newPassInput = document.getElementById('settings-new-pass');
+    const confirmPassInput = document.getElementById('settings-confirm-pass');
+    const errorDiv = document.getElementById('settings-pass-error');
+    
+    const currPass = currPassInput.value.trim();
+    const newPass = newPassInput.value.trim();
+    const confirmPass = confirmPassInput.value.trim();
+    
+    if (errorDiv) {
+        errorDiv.classList.add('hidden');
+        errorDiv.textContent = '';
+    }
+    
+    if (newPass !== confirmPass) {
+        if (errorDiv) {
+            errorDiv.textContent = "New passwords do not match.";
+            errorDiv.classList.remove('hidden');
+        }
+        return;
+    }
+    
+    const updateBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = updateBtn.innerHTML;
+    updateBtn.disabled = true;
+    updateBtn.innerHTML = 'Updating...';
+    
+    fetch('/change_password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({
+            current_password: currPass,
+            new_password: newPass,
+            confirm_password: confirmPass
+        })
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(({ status, data }) => {
+        updateBtn.disabled = false;
+        updateBtn.innerHTML = originalText;
+        
+        if (status === 200 && data.status === 'success') {
+            currPassInput.value = '';
+            newPassInput.value = '';
+            confirmPassInput.value = '';
+            showToast("Password updated successfully!");
+        } else {
+            if (errorDiv) {
+                errorDiv.textContent = data.message || "Failed to update password.";
+                errorDiv.classList.remove('hidden');
+            }
+        }
+    })
+    .catch(err => {
+        console.error('Error updating password:', err);
+        updateBtn.disabled = false;
+        updateBtn.innerHTML = originalText;
+        if (errorDiv) {
+            errorDiv.textContent = "An error occurred while changing password.";
+            errorDiv.classList.remove('hidden');
+        }
+    });
+}
+
+function uploadProfilePic(input) {
+    if (!input.files || !input.files[0]) return;
+    
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('profile_pic', file);
+    
+    const container = document.getElementById('avatar-container');
+    if (container) container.classList.add('opacity-50');
+    
+    fetch('/upload_profile_pic', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Update preview
+            const preview = document.getElementById('avatar-preview');
+            const placeholder = document.getElementById('avatar-placeholder');
+            
+            if (preview) {
+                preview.src = data.profile_pic_url;
+                preview.classList.remove('hidden');
+            }
+            if (placeholder) {
+                placeholder.classList.add('hidden');
+            }
+            
+            // Also update any header profile image if it exists
+            const headerPics = document.querySelectorAll('header img.rounded-full');
+            headerPics.forEach(img => {
+                img.src = data.profile_pic_url;
+            });
+            
+            showToast("Profile picture updated successfully!");
+        } else {
+            showToast(data.message || "Failed to upload profile picture.");
+        }
+        if (container) container.classList.remove('opacity-50');
+    })
+    .catch(err => {
+        console.error('Error uploading profile picture:', err);
+        showToast("Error uploading profile picture.");
+        if (container) container.classList.remove('opacity-50');
+    });
+}
+
+// Debounce helper
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+let autoSaveTimeout = null;
+
+function autoSaveProfile() {
+    const nameInput = document.getElementById('settings-full-name');
+    const emailInput = document.getElementById('settings-email');
+    const prefixSelect = document.getElementById('settings-phone-prefix');
+    const localInput = document.getElementById('settings-phone-local');
+    const statusSpan = document.getElementById('autosave-status');
+    const errorDiv = document.getElementById('settings-info-error');
+    
+    if (!nameInput || !emailInput || !prefixSelect || !localInput) return;
+    
+    const fullName = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const phone = (prefixSelect.value + " " + localInput.value.trim()).trim();
+    
+    if (!fullName || !email || !localInput.value.trim()) {
+        return;
+    }
+    
+    if (statusSpan) {
+        statusSpan.textContent = 'Saving...';
+        statusSpan.classList.remove('opacity-0', 'text-rose-600', 'text-emerald-600');
+        statusSpan.classList.add('opacity-100', 'text-slate-400');
+    }
+    
+    if (errorDiv) {
+        errorDiv.classList.add('hidden');
+        errorDiv.textContent = '';
+    }
+    
+    fetch('/update_profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify({ full_name: fullName, email: email, phone: phone })
+    })
+    .then(response => response.json().then(data => ({ status: response.status, data })))
+    .then(({ status, data }) => {
+        if (status === 200 && data.status === 'success') {
+            if (displayName) displayName.textContent = fullName;
+            if (displayEmail) displayEmail.textContent = email;
+            
+            const displayPhone = document.getElementById('profile-display-phone');
+            if (displayPhone) displayPhone.textContent = phone;
+            
+            if (editFullNameInput) editFullNameInput.value = fullName;
+            if (editEmailInput) editEmailInput.value = email;
+            
+            if (statusSpan) {
+                statusSpan.textContent = 'Saved';
+                statusSpan.classList.remove('text-slate-400', 'text-rose-600');
+                statusSpan.classList.add('text-emerald-600');
+                
+                if (autoSaveTimeout) clearTimeout(autoSaveTimeout);
+                autoSaveTimeout = setTimeout(() => {
+                    statusSpan.classList.remove('opacity-100');
+                    statusSpan.classList.add('opacity-0');
+                }, 2000);
+            }
+        } else {
+            if (statusSpan) {
+                statusSpan.textContent = data.message || 'Error saving';
+                statusSpan.classList.remove('text-slate-400', 'text-emerald-600');
+                statusSpan.classList.add('text-rose-600');
+            }
+        }
+    })
+    .catch(err => {
+        console.error('Error auto-saving profile:', err);
+        if (statusSpan) {
+            statusSpan.textContent = 'Error saving';
+            statusSpan.classList.remove('text-slate-400', 'text-emerald-600');
+            statusSpan.classList.add('text-rose-600');
+        }
+    });
+}
+
+}
+
+// Auto-save element bindings
+const settingsNameInput = document.getElementById('settings-full-name');
+const settingsEmailInput = document.getElementById('settings-email');
+const settingsPrefixSelect = document.getElementById('settings-phone-prefix');
+const settingsLocalInput = document.getElementById('settings-phone-local');
+
+if (settingsNameInput && settingsEmailInput && settingsPrefixSelect && settingsLocalInput) {
+    const debouncedSave = debounce(autoSaveProfile, 800);
+    
+    settingsNameInput.addEventListener('input', debouncedSave);
+    settingsLocalInput.addEventListener('input', debouncedSave);
+    
+    settingsEmailInput.addEventListener('change', autoSaveProfile);
+    settingsPrefixSelect.addEventListener('change', autoSaveProfile);
+}
+
+// --- Dynamic addresses & payment methods logic ---
+let userAddresses = {{ addresses | tojson | safe }};
+let userPayments = {{ payment_methods | tojson | safe }};
+
+function renderAddresses() {
+    const grid = document.getElementById('addresses-grid');
+    if (!grid) return;
+    
+    if (userAddresses.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full border border-dashed border-slate-200 rounded-2xl p-8 text-center space-y-3">
+                <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto text-slate-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-900">No Saved Addresses</h4>
+                    <p class="text-xs text-slate-500">You haven't saved any addresses yet.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = userAddresses.map(addr => {
+        const defaultBadge = addr.is_default ? `<span class="text-xs font-semibold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-100 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-brand-600"></span>Default</span>` : '';
+        const defaultAction = addr.is_default ? '' : `<button onclick="setDefaultAddress('${addr.id}')" class="text-slate-500 hover:text-brand-600 transition-colors">Set as Default</button>`;
+        
+        let labelIcon = `
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            </svg>
+        `;
+        if (addr.label === 'Home') {
+            labelIcon = `
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+            `;
+        } else if (addr.label === 'Work' || addr.label === 'Office') {
+            labelIcon = `
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            `;
+        }
+        
+        return `
+            <div class="border border-slate-150 rounded-2xl p-5 space-y-4 hover:border-brand-500 hover:shadow-md transition-all duration-300 relative bg-white flex flex-col justify-between">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider bg-slate-100 text-slate-800 flex items-center gap-1.5">
+                            ${labelIcon}
+                            ${addr.label}
+                        </span>
+                        ${defaultBadge}
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <h4 class="font-bold text-slate-900">${addr.recipient_name}</h4>
+                        <p class="text-sm text-slate-500 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.94.725l.548 2.2a1 1 0 01-.321.988l-1.305.98a10.582 10.582 0 004.872 4.872l.98-1.305a1 1 0 01.988-.321l2.2.548a1 1 0 01.725.94V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            ${addr.recipient_phone}
+                        </p>
+                    </div>
+                    
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        ${addr.street}, ${addr.city}, ${addr.country}
+                    </p>
+                </div>
+                
+                <div class="flex items-center justify-between pt-4 border-t border-slate-100 text-xs font-semibold">
+                    <div>
+                        ${defaultAction}
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="editAddress('${addr.id}')" class="text-slate-500 hover:text-brand-600 transition-colors flex items-center gap-0.5">
+                            Edit
+                        </button>
+                        <button onclick="deleteAddress('${addr.id}')" class="text-rose-600 hover:text-rose-700 transition-colors flex items-center gap-0.5">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderPaymentMethods() {
+    const grid = document.getElementById('payment-methods-grid');
+    if (!grid) return;
+    
+    if (userPayments.length === 0) {
+        grid.innerHTML = `
+            <div class="col-span-full border border-dashed border-slate-200 rounded-2xl p-8 text-center space-y-3">
+                <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto text-slate-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-900">No Payment Methods</h4>
+                    <p class="text-xs text-slate-500">You haven't saved any payment methods yet.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = userPayments.map(pm => {
+        const defaultText = pm.is_default ? `
+            <span class="text-brand-600 flex items-center gap-1">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                Default Payment
+            </span>
+        ` : `
+            <button onclick="setDefaultPayment('${pm.id}')" class="text-slate-500 hover:text-brand-600 transition-colors">Set as Default</button>
+        `;
+        
+        let cardVisualHTML = '';
+        
+        if (pm.type === 'card') {
+            let gradientClass = 'from-slate-900 via-slate-800 to-indigo-950';
+            if (pm.card_brand === 'Mastercard') {
+                gradientClass = 'from-stone-900 via-slate-850 to-rose-950';
+            } else if (pm.card_brand === 'JCB') {
+                gradientClass = 'from-slate-900 via-slate-800 to-emerald-950';
+            }
+            
+            cardVisualHTML = `
+                <div class="relative w-full aspect-[1.586/1] rounded-t-2xl overflow-hidden shadow-sm flex flex-col justify-between p-6 bg-gradient-to-br ${gradientClass} text-white">
+                    <div class="flex items-center justify-between">
+                        <div class="w-10 h-8 rounded-md bg-amber-400/80 backdrop-blur-sm relative overflow-hidden flex flex-col justify-between p-1.5 opacity-90">
+                            <div class="grid grid-cols-3 gap-0.5 w-full h-full opacity-40">
+                                <div class="border border-slate-950/20"></div>
+                                <div class="border border-slate-950/20"></div>
+                                <div class="border border-slate-950/20"></div>
+                            </div>
+                        </div>
+                        <span class="text-lg font-black italic tracking-wider opacity-90 font-mono">${pm.card_brand.toUpperCase()}</span>
+                    </div>
+                    
+                    <div class="text-xl font-bold tracking-[0.2em] font-mono opacity-95 text-center my-2 select-none">
+                        ${pm.card_number}
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="truncate max-w-[170px]">
+                            <p class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5 select-none">Cardholder Name</p>
+                            <p class="text-xs font-semibold tracking-wide uppercase truncate">${pm.cardholder_name}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5 select-none">Expires</p>
+                            <p class="text-xs font-semibold tracking-wide font-mono">${pm.expiry}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (pm.type === 'bakong') {
+            cardVisualHTML = `
+                <div class="relative w-full aspect-[1.586/1] rounded-t-2xl overflow-hidden shadow-sm flex flex-col justify-between p-6 bg-gradient-to-br from-red-800 via-amber-800 to-red-950 text-white">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="p-1 bg-white/10 rounded-lg">
+                                <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path>
+                                </svg>
+                            </div>
+                            <span class="text-xs font-bold tracking-wide select-none">Bakong Wallet</span>
+                        </div>
+                        <span class="text-[8px] font-bold uppercase bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30 select-none">KHQR Wallet</span>
+                    </div>
+                    
+                    <div class="my-2">
+                        <p class="text-[8px] uppercase tracking-wider text-amber-200/50 font-semibold mb-0.5 select-none">Account ID</p>
+                        <p class="text-base font-bold tracking-wide font-mono text-amber-100">${pm.account_name}</p>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-[8px] uppercase tracking-wider text-amber-200/50 font-semibold mb-0.5 select-none">Linked Wallet</p>
+                            <p class="text-xs font-semibold tracking-wide select-none">${pm.wallet_label}</p>
+                        </div>
+                        <span class="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-semibold select-none">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Linked
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        return `
+            <div class="flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden hover:shadow-md transition-all duration-300">
+                ${cardVisualHTML}
+                
+                <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs font-semibold">
+                    <div>
+                        ${defaultText}
+                    </div>
+                    <button onclick="deletePaymentMethod('${pm.id}')" class="text-rose-600 hover:text-rose-700 transition-colors flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Remove
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Addresses CRUD JS
+const addressModal = document.getElementById('address-modal');
+const addressForm = document.getElementById('addressForm');
+const addressError = document.getElementById('address-error');
+
+function openAddressModal(addrId = null) {
+    if (!addressModal) return;
+    addressError.classList.add('hidden');
+    addressError.textContent = '';
+    
+    if (addrId) {
+        const addr = userAddresses.find(a => a.id === addrId);
+        if (!addr) return;
+        document.getElementById('address-modal-title').textContent = 'Edit Address';
+        document.getElementById('address-id').value = addr.id;
+        document.getElementById('address-label').value = addr.label;
+        document.getElementById('address-recipient-name').value = addr.recipient_name;
+        document.getElementById('address-street').value = addr.street;
+        document.getElementById('address-city').value = addr.city;
+        document.getElementById('address-is-default').checked = addr.is_default;
+        
+        const prefixes = ['+855', '+1', '+66', '+84', '+856'];
+        let matchedPrefix = '+855';
+        let localNum = addr.recipient_phone;
+        for (const p of prefixes) {
+            if (addr.recipient_phone.startsWith(p)) {
+                matchedPrefix = p;
+                localNum = addr.recipient_phone.substring(p.length).trim();
+                break;
+            }
+        }
+        document.getElementById('address-phone-prefix').value = matchedPrefix;
+        document.getElementById('address-phone-local').value = localNum;
+    } else {
+        document.getElementById('address-modal-title').textContent = 'Add New Address';
+        document.getElementById('address-id').value = '';
+        document.getElementById('address-label').value = 'Home';
+        document.getElementById('address-recipient-name').value = displayName ? displayName.textContent.trim() : '';
+        document.getElementById('address-street').value = '';
+        document.getElementById('address-city').value = 'Phnom Penh';
+        document.getElementById('address-is-default').checked = false;
+        
+        const displayPhone = document.getElementById('profile-display-phone');
+        if (displayPhone) {
+            const phoneStr = displayPhone.textContent.trim();
+            const prefixes = ['+855', '+1', '+66', '+84', '+856'];
+            let matchedPrefix = '+855';
+            let localNum = phoneStr;
+            for (const p of prefixes) {
+                if (phoneStr.startsWith(p)) {
+                    matchedPrefix = p;
+                    localNum = phoneStr.substring(p.length).trim();
+                    break;
+                }
+            }
+            document.getElementById('address-phone-prefix').value = matchedPrefix;
+            document.getElementById('address-phone-local').value = localNum;
+        } else {
+            document.getElementById('address-phone-prefix').value = '+855';
+            document.getElementById('address-phone-local').value = '';
+        }
+    }
+    
+    addressModal.classList.remove('hidden');
+}
+
+function closeAddressModal() {
+    if (addressModal) {
+        addressModal.classList.add('hidden');
+        addressForm.reset();
+    }
+}
+
+function submitAddressForm(e) {
+    e.preventDefault();
+    const addrId = document.getElementById('address-id').value;
+    const label = document.getElementById('address-label').value;
+    const recipient_name = document.getElementById('address-recipient-name').value.trim();
+    const phonePrefix = document.getElementById('address-phone-prefix').value;
+    const phoneLocal = document.getElementById('address-phone-local').value.trim();
+    const street = document.getElementById('address-street').value.trim();
+    const city = document.getElementById('address-city').value.trim();
+    const country = document.getElementById('address-country').value.trim();
+    const is_default = document.getElementById('address-is-default').checked;
+    
+    if (!recipient_name || !phoneLocal || !street || !city) {
+        addressError.textContent = 'All fields are required.';
+        addressError.classList.remove('hidden');
+        return;
+    }
+    
+    const recipient_phone = `${phonePrefix} ${phoneLocal}`;
+    const payload = {
+        label, recipient_name, recipient_phone, street, city, country, is_default
+    };
+    
+    const url = addrId ? `/edit_address/${addrId}` : '/add_address';
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            userAddresses = data.addresses;
+            renderAddresses();
+            closeAddressModal();
+        } else {
+            addressError.textContent = data.message || 'An error occurred.';
+            addressError.classList.remove('hidden');
+        }
+    })
+    .catch(err => {
+        addressError.textContent = 'Failed to save address.';
+        addressError.classList.remove('hidden');
+    });
+}
+
+function editAddress(addrId) {
+    openAddressModal(addrId);
+}
+
+function deleteAddress(addrId) {
+    if (!confirm('Are you sure you want to delete this address?')) return;
+    
+    fetch(`/delete_address/${addrId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            userAddresses = data.addresses;
+            renderAddresses();
+        }
+    });
+}
+
+function setDefaultAddress(addrId) {
+    fetch(`/set_default_address/${addrId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            userAddresses = data.addresses;
+            renderAddresses();
+        }
+    });
+}
+
+// Payment Methods CRUD JS
+const paymentModal = document.getElementById('payment-modal');
+const paymentForm = document.getElementById('paymentForm');
+const paymentError = document.getElementById('payment-error');
+
+function openPaymentModal() {
+    if (!paymentModal) return;
+    paymentError.classList.add('hidden');
+    paymentError.textContent = '';
+    togglePaymentType('card');
+    paymentModal.classList.remove('hidden');
+}
+
+function closePaymentModal() {
+    if (paymentModal) {
+        paymentModal.classList.add('hidden');
+        paymentForm.reset();
+    }
+}
+
+function togglePaymentType(type) {
+    document.getElementById('payment-type').value = type;
+    const tabCard = document.getElementById('pay-tab-card');
+    const tabBakong = document.getElementById('pay-tab-bakong');
+    const cardFields = document.getElementById('card-fields');
+    const bakongFields = document.getElementById('bakong-fields');
+    
+    if (type === 'card') {
+        tabCard.className = 'flex-1 pb-3 text-sm font-bold border-b-2 border-brand-600 text-brand-600 transition-colors focus:outline-none';
+        tabBakong.className = 'flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-colors focus:outline-none';
+        cardFields.classList.remove('hidden');
+        bakongFields.classList.add('hidden');
+    } else {
+        tabBakong.className = 'flex-1 pb-3 text-sm font-bold border-b-2 border-brand-600 text-brand-600 transition-colors focus:outline-none';
+        tabCard.className = 'flex-1 pb-3 text-sm font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-900 transition-colors focus:outline-none';
+        cardFields.classList.add('hidden');
+        bakongFields.classList.remove('hidden');
+    }
+}
+
+// Bind Card formatting events
+const cardNumInput = document.getElementById('payment-card-number');
+if (cardNumInput) {
+    cardNumInput.addEventListener('input', function(e) {
+        let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        let formatted = '';
+        for (let i = 0; i < val.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formatted += ' ';
+            }
+            formatted += val[i];
+        }
+        e.target.value = formatted;
+    });
+}
+
+const expiryInput = document.getElementById('payment-expiry');
+if (expiryInput) {
+    expiryInput.addEventListener('input', function(e) {
+        let val = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+        if (val.length > 2) {
+            e.target.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+        } else {
+            e.target.value = val;
+        }
+    });
+}
+
+function submitPaymentForm(e) {
+    e.preventDefault();
+    const type = document.getElementById('payment-type').value;
+    const is_default = document.getElementById('payment-is-default').checked;
+    
+    let payload = { type, is_default };
+    
+    if (type === 'card') {
+        const card_brand = document.getElementById('payment-card-brand').value;
+        const cardholder_name = document.getElementById('payment-cardholder-name').value.trim();
+        const card_number = document.getElementById('payment-card-number').value.replace(/\s+/g, '');
+        const expiry = document.getElementById('payment-expiry').value;
+        const cvv = document.getElementById('payment-cvv').value;
+        
+        if (!cardholder_name || !card_number || !expiry || !cvv) {
+            paymentError.textContent = 'All card fields are required.';
+            paymentError.classList.remove('hidden');
+            return;
+        }
+        if (card_number.length < 12) {
+            paymentError.textContent = 'Please enter a valid card number.';
+            paymentError.classList.remove('hidden');
+            return;
+        }
+        
+        payload.card_brand = card_brand;
+        payload.cardholder_name = cardholder_name;
+        payload.card_number = card_number;
+        payload.expiry = expiry;
+        payload.cvv = cvv;
+    } else {
+        const account_name = document.getElementById('payment-bakong-account').value.trim();
+        if (!account_name) {
+            paymentError.textContent = 'Bakong Account ID is required.';
+            paymentError.classList.remove('hidden');
+            return;
+        }
+        payload.account_name = account_name;
+    }
+    
+    fetch('/add_payment_method', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            userPayments = data.payment_methods;
+            renderPaymentMethods();
+            closePaymentModal();
+        } else {
+            paymentError.textContent = data.message || 'An error occurred.';
+            paymentError.classList.remove('hidden');
+        }
+    })
+    .catch(err => {
+        paymentError.textContent = 'Failed to save payment method.';
+        paymentError.classList.remove('hidden');
+    });
+}
+
+function deletePaymentMethod(methodId) {
+    if (!confirm('Are you sure you want to delete this payment method?')) return;
+    
+    fetch(`/delete_payment_method/${methodId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            userPayments = data.payment_methods;
+            renderPaymentMethods();
+        }
+    });
+}
+
+function setDefaultPayment(methodId) {
+    fetch(`/set_default_payment_method/${methodId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            userPayments = data.payment_methods;
+            renderPaymentMethods();
+        }
+    });
+}
+
+// Initial render calls
+renderAddresses();
+renderPaymentMethods();
+</script>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+    <!-- Hero / Story Section -->
+    <section class="flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div class="w-full lg:w-1/2 space-y-6">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-brand-50 text-brand-600 uppercase tracking-widest">
+                Our Story
+            </span>
+            <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 tracking-tight leading-tight">
+                Redefining Modern Commerce through Integrity.
+            </h1>
+            <p class="text-lg text-slate-500 leading-relaxed max-w-xl">
+                Sinat Shop began with a simple promise: quality premium goods to be accessible without compromising on ethics or design excellence. We bridge the gap between craftsmanship and modern convenience.
+            </p>
+        </div>
+        <div class="w-full lg:w-1/2">
+            <div class="relative rounded-2xl overflow-hidden shadow-lg aspect-[4/3] bg-slate-100">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800" 
+                     alt="Sinat Shop Design Studio" 
+                     class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Built for Tomorrow Section -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Our Mission Card (2 cols) -->
+        <div class="lg:col-span-2 bg-slate-950 text-white rounded-3xl p-8 md:p-12 flex flex-col justify-between space-y-12">
+            <div class="bg-white/10 w-12 h-12 rounded-xl flex items-center justify-center text-xl text-white">
+                <i class="fas fa-compass"></i>
+            </div>
+            <div class="space-y-4">
+                <h3 class="text-2xl font-bold tracking-tight">Our Mission</h3>
+                <p class="text-slate-300 leading-relaxed text-base max-w-xl">
+                    To curate a collection of lifestyle essentials that embody the pinnacle of innovation, sustainability, and aesthetic purity. We believe that what you own should reflect who you aspire to be.
+                </p>
+            </div>
+        </div>
+
+        <!-- Built for Tomorrow Card (1 col) -->
+        <div class="bg-brand-50 border border-brand-100 rounded-3xl p-8 flex flex-col justify-between space-y-12 text-slate-900">
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold tracking-tight">Built for Tomorrow</h3>
+                <p class="text-slate-600 leading-relaxed text-sm">
+                    By leveraging raw materials and high-end sourcing, we minimize waste and maximize value for our global community.
+                </p>
+            </div>
+            <div class="w-10 h-10 rounded-full border border-slate-300 flex items-center justify-center text-slate-500">
+                <i class="fas fa-leaf text-xs"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Principles Section -->
+    <section class="space-y-12 text-center">
+        <div class="space-y-2">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900">The Principles that Drive Us</h2>
+            <div class="w-12 h-1 bg-brand-600 mx-auto rounded-full"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <!-- Principle 1 -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-8 space-y-4">
+                <span class="inline-flex p-3 bg-brand-50 rounded-xl text-brand-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                </span>
+                <h4 class="text-lg font-bold text-slate-900">Quality</h4>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    Every item in our catalog undergoes rigorous vetting. We don't just sell products; we sell reliability and long-term satisfaction.
+                </p>
+            </div>
+            <!-- Principle 2 -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-8 space-y-4">
+                <span class="inline-flex p-3 bg-brand-50 rounded-xl text-brand-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </span>
+                <h4 class="text-lg font-bold text-slate-900">Innovation</h4>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    Technology is the heart of Sinat Shop. From curated selections to seamless UX interfaces, we embrace the future of retail.
+                </p>
+            </div>
+            <!-- Principle 3 -->
+            <div class="bg-white border border-slate-100 rounded-2xl p-8 space-y-4">
+                <span class="inline-flex p-3 bg-brand-50 rounded-xl text-brand-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </span>
+                <h4 class="text-lg font-bold text-slate-900">Community</h4>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    We thrive on feedback. Our products are shaped by the conversations we have with our customers every single day.
+                </p>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+</div>
+{% endblock %}

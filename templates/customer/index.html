@@ -1,0 +1,183 @@
+{% extends "customer/layout.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+    <!-- Hero Section -->
+    <section class="bg-slate-100 rounded-3xl overflow-hidden relative flex flex-col md:flex-row items-center justify-between p-8 sm:p-12 md:p-16 gap-8">
+        <div class="space-y-6 max-w-lg z-10">
+            <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full">New Season Arrivals</span>
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-slate-900 leading-none">
+                Elevate Your Everyday Essentials
+            </h1>
+            <p class="text-slate-500 text-base sm:text-lg leading-relaxed">
+                Discover a curated selection of premium electronics, wear, furniture, and accessories handpicked for the modern lifestyle.
+            </p>
+            <div class="flex flex-wrap gap-4 pt-2">
+                <a href="{{ url_for('products') }}" class="px-6 py-3.5 bg-slate-950 hover:bg-slate-900 text-white font-semibold text-sm rounded-xl transition-colors shadow-sm">
+                    Shop All Products
+                </a>
+                <a href="{{ url_for('about') }}" class="px-6 py-3.5 bg-white border border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-300 font-semibold text-sm rounded-xl transition-all shadow-sm">
+                    View Lookbook
+                </a>
+            </div>
+        </div>
+        <div class="w-full md:w-1/2 flex justify-center md:justify-end relative">
+            <div class="w-80 h-80 sm:w-96 sm:h-96 md:w-[420px] md:h-[420px] rounded-full bg-slate-200/50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+            <!-- High quality premium armchair image -->
+            <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=800" 
+                 alt="Featured Premium Armchair" 
+                 class="w-72 h-72 sm:w-80 sm:h-80 md:w-[380px] md:h-[380px] object-contain drop-shadow-2xl z-10 transform hover:scale-105 transition-transform duration-500">
+        </div>
+    </section>
+
+    <!-- Curated Categories -->
+    <section class="space-y-8">
+        <div class="flex justify-between items-end">
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">Curated Categories</h2>
+            <a href="{{ url_for('products') }}" class="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors flex items-center gap-1">
+                View all &rarr;
+            </a>
+        </div>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Category 1 -->
+            <a href="{{ url_for('products', category='electronics') }}" class="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100 block">
+                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?q=80&w=400" alt="Electronics" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-95">
+                <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-slate-950/60 to-transparent text-white">
+                    <p class="text-xs font-semibold text-slate-200 uppercase tracking-widest mb-0.5">Explore</p>
+                    <h4 class="text-lg font-bold">Electronics</h4>
+                </div>
+            </a>
+            <!-- Category 2 -->
+            <a href="{{ url_for('products', category='men\'s clothing') }}" class="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100 block">
+                <img src="https://images.unsplash.com/photo-1488161628813-04466f872be2?q=80&w=400" alt="Man's Fashion" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-95">
+                <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-slate-950/60 to-transparent text-white">
+                    <p class="text-xs font-semibold text-slate-200 uppercase tracking-widest mb-0.5">Explore</p>
+                    <h4 class="text-lg font-bold">Man's Fashion</h4>
+                </div>
+            </a>
+            <!-- Category 3 -->
+            <a href="{{ url_for('products', category='women\'s clothing') }}" class="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100 block">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400" alt="Women's Fashion" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-95">
+                <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-slate-950/60 to-transparent text-white">
+                    <p class="text-xs font-semibold text-slate-200 uppercase tracking-widest mb-0.5">Explore</p>
+                    <h4 class="text-lg font-bold">Women's Fashion</h4>
+                </div>
+            </a>
+            <!-- Category 4 -->
+            <a href="{{ url_for('products', category='jewelery') }}" class="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100 block">
+                <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=400" alt="Jewelry" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 tracking-wide brightness-95">
+                <div class="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-slate-950/60 to-transparent text-white">
+                    <p class="text-xs font-semibold text-slate-200 uppercase tracking-widest mb-0.5">Explore</p>
+                    <h4 class="text-lg font-bold">Jewelry</h4>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- New Arrivals Product Grid (4 columns) -->
+    <section class="space-y-8">
+        <div class="flex justify-between items-end">
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">New Arrivals</h2>
+            <a href="{{ url_for('products') }}" class="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors flex items-center gap-1">
+                View all products &rarr;
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for itm in item[:8] %}
+            <div class="group flex flex-col bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                <!-- Image Wrapper -->
+                <div class="aspect-square bg-slate-50 relative overflow-hidden flex items-center justify-center p-6">
+                    <a href="{{ url_for('view_product', item_id=itm.id) }}" class="block w-full h-full">
+                        <img src="{{ itm.image }}" alt="{{ itm.title }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
+                    </a>
+                    <!-- Favorite Toggle Button -->
+                    <button type="button" 
+                            class="toggle-favorite absolute top-4 right-4 z-10 p-2 bg-white border border-slate-100 hover:border-slate-200 rounded-full shadow-sm transition-colors text-slate-400 hover:text-rose-600 animate-fade-in"
+                            data-product-id="{{ itm.id }}"
+                            title="Add to Favorites">
+                        <i class="{% if itm.id in fav_list %}fas fa-heart text-rose-600{% else %}far fa-heart{% endif %} text-sm"></i>
+                    </button>
+                    {% if itm.discount %}
+                    <span class="absolute top-4 left-4 bg-rose-600 text-white text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md">
+                        -{{ itm.discount }}%
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Details -->
+                <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                    <div class="space-y-1.5">
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ itm.category }}</p>
+                        <h4 class="font-bold text-slate-800 text-sm sm:text-base line-clamp-1 group-hover:text-brand-600 transition-colors">
+                            <a href="{{ url_for('view_product', item_id=itm.id) }}">{{ itm.title }}</a>
+                        </h4>
+
+                    </div>
+
+                    <div class="flex items-baseline justify-between border-t border-slate-50 pt-4">
+                        <span class="text-lg font-bold text-slate-900">${{ itm.price }}</span>
+                        {% if itm.old_price %}
+                        <span class="text-xs text-slate-400 line-through">${{ itm.old_price }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Add to Cart CTA -->
+                <div class="px-5 pb-5">
+                    <form action="{{ url_for('add_to_cart', item_id=itm.id) }}" method="POST">
+                        <button type="submit" class="w-full py-2.5 bg-slate-950 text-white font-semibold text-xs rounded-xl hover:bg-brand-600 transition-all flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Trust Elements Section -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-8 border-y border-slate-100 py-12">
+        <div class="flex items-start gap-4">
+            <span class="p-3 bg-brand-50 text-brand-600 rounded-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                </svg>
+            </span>
+            <div>
+                <h4 class="font-bold text-slate-900">Free Shipping</h4>
+                <p class="text-sm text-slate-500 mt-1">On all orders over $150. Fast, reliable delivery to your door.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4">
+            <span class="p-3 bg-brand-50 text-brand-600 rounded-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </span>
+            <div>
+                <h4 class="font-bold text-slate-900">Secure Payments</h4>
+                <p class="text-sm text-slate-500 mt-1">Encrypted transactions via secure gateways. Your data is protected.</p>
+            </div>
+        </div>
+        <div class="flex items-start gap-4">
+            <span class="p-3 bg-brand-50 text-brand-600 rounded-xl">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                </svg>
+            </span>
+            <div>
+                <h4 class="font-bold text-slate-900">24/7 Support</h4>
+                <p class="text-sm text-slate-500 mt-1">Our customer service team is here to help you around the clock.</p>
+            </div>
+        </div>
+    </section>
+
+
+
+</div>
+{% endblock %}
