@@ -13,7 +13,23 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Run CI Validation
-      run: |
-        echo '?? Starting Validation Workflow'
-        echo '? Validation successfully passed! Commit is healthy.'
+    - name: Executing remote ssh commands to deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          echo "🚀 Connected to Ubuntu Server"
+          cd /home/ubuntu/python-final-ecomerce
+          
+          echo "🔄 Setting remote origin to the new repository..."
+          git remote set-url origin https://github.com/nounsinat33-bit/sinat_pp-final.git || true
+          
+          echo "📥 Pulling latest code changes..."
+          git pull origin main
+          
+          echo "♻️ Restarting Gunicorn (flaskapp)..."
+          sudo systemctl restart flaskapp
+          
+          echo "✅ Deployment completely finished!"
