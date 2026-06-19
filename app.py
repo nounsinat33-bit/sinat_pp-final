@@ -129,6 +129,11 @@ def register():
                 }
                 users.append(new_user)
                 save_users(users)
+                try:
+                    with open('user.json', 'w') as f:
+                        json.dump(users, f, indent=4)
+                except Exception as e:
+                    print(f"Error saving to user.json: {e}")
                 return redirect(url_for('login', registered='1'))
 
     return render_template('share/register.html', error=error)
