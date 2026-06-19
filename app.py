@@ -22,7 +22,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # --- USER STORAGE HELPERS ---
-USER_FILE = 'user.jason'
+USER_FILE = 'order_history.json'
 
 import ast
 
@@ -54,7 +54,7 @@ def save_users(users):
         with open(USER_FILE, 'w') as f:
             json.dump(users, f, indent=4)
     except Exception as e:
-        print(f"Error saving to user.jason: {e}")
+        print(f"Error saving to order_history.json: {e}")
     try:
         filtered_users = [{'email': u['email'], 'password': u['password']} for u in users if 'email' in u and 'password' in u]
         with open('user.json', 'w') as f:
@@ -387,7 +387,7 @@ def upload_profile_pic():
 
         profile_pic_url = f"/static/uploads/{new_filename}"
 
-        # Update user in user.jason
+        # Update user in order_history.json
         users = load_users()
         for user in users:
             if user['email'].lower() == user_email.lower():
@@ -707,7 +707,7 @@ def place_order():
     except Exception as e:
         print(f"Failed to push notification to Telegram: {e}")
 
-    # 4.5 Save the order to user.jason if user is logged in
+    # 4.5 Save the order to order_history.json if user is logged in
     if 'user' in session:
         user_email = session['user']['email']
         users = load_users()
