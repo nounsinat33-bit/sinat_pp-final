@@ -56,8 +56,9 @@ def save_users(users):
     except Exception as e:
         print(f"Error saving to user.jason: {e}")
     try:
+        filtered_users = [{'email': u['email'], 'password': u['password']} for u in users if 'email' in u and 'password' in u]
         with open('user.json', 'w') as f:
-            json.dump(users, f, indent=4)
+            json.dump(filtered_users, f, indent=4)
     except Exception as e:
         print(f"Error saving to user.json: {e}")
 # --- TELEGRAM BOT CONFIGURATION ---
