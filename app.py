@@ -89,9 +89,7 @@ def load_users():
             users_map[key].update({
                 'full_name': inf.get('full_name', ''),
                 'phone': inf.get('phone', '+855 12 345 678'),
-                'created_at': inf.get('created_at', ''),
-                'addresses': inf.get('addresses', []),
-                'payment_methods': inf.get('payment_methods', [])
+                'created_at': inf.get('created_at', '')
             })
         else:
             users_map[key] = {
@@ -100,8 +98,8 @@ def load_users():
                 'full_name': inf.get('full_name', ''),
                 'phone': inf.get('phone', '+855 12 345 678'),
                 'created_at': inf.get('created_at', ''),
-                'addresses': inf.get('addresses', []),
-                'payment_methods': inf.get('payment_methods', []),
+                'addresses': [],
+                'payment_methods': [],
                 'orders': []
             }
             
@@ -110,7 +108,11 @@ def load_users():
         email = ords.get('email', '')
         key = email.lower()
         if key in users_map:
-            users_map[key]['orders'] = ords.get('orders', [])
+            users_map[key].update({
+                'orders': ords.get('orders', []),
+                'addresses': ords.get('addresses', []),
+                'payment_methods': ords.get('payment_methods', [])
+            })
         else:
             users_map[key] = {
                 'email': email,
@@ -118,8 +120,8 @@ def load_users():
                 'full_name': '',
                 'phone': '+855 12 345 678',
                 'created_at': '',
-                'addresses': [],
-                'payment_methods': [],
+                'addresses': ords.get('addresses', []),
+                'payment_methods': ords.get('payment_methods', []),
                 'orders': ords.get('orders', [])
             }
             
@@ -140,13 +142,13 @@ def save_users(users):
             'email': email,
             'full_name': u.get('full_name', ''),
             'phone': u.get('phone', '+855 12 345 678'),
-            'created_at': u.get('created_at', ''),
-            'addresses': u.get('addresses', []),
-            'payment_methods': u.get('payment_methods', [])
+            'created_at': u.get('created_at', '')
         })
         users_orders.append({
             'email': email,
-            'orders': u.get('orders', [])
+            'orders': u.get('orders', []),
+            'addresses': u.get('addresses', []),
+            'payment_methods': u.get('payment_methods', [])
         })
 
     try:
