@@ -41,26 +41,131 @@ def load_cart_cookie(cookie_val):
             return {}
 
 def load_users():
-    if not os.path.exists(USER_FILE):
-        return []
-    try:
-        with open(USER_FILE, 'r') as f:
-            return json.load(f)
-    except Exception:
-        return []
+    credentials = []
+    info = []
+    orders = []
+    
+    if os.path.exists('user.json'):
+        try:
+            with open('user.json', 'r') as f:
+                credentials = json.load(f)
+        except Exception:
+            pass
+    if os.path.exists('information.json'):
+        try:
+            with open('information.json', 'r') as f:
+                info = json.load(f)
+        except Exception:
+            pass
+    if os.path.exists('order_history.json'):
+        try:
+            with open('order_history.json', 'r') as f:
+                orders = json.load(f)
+        except Exception:
+            pass
+            
+    users_map = {}
+    
+    # 1. Load credentials
+    for cred in credentials:
+        email = cred.get('email', '')
+        if email:
+            users_map[email.lower()] = {
+                'email': email,
+                'password': cred.get('password', ''),
+                'full_name': '',
+                'phone': '+855 12 345 678',
+                'created_at': '',
+                'addresses': [],
+                'payment_methods': [],
+                'orders': []
+            }
+            
+    # 2. Load information
+    for inf in info:
+        email = inf.get('email', '')
+        key = email.lower()
+        if key in users_map:
+            users_map[key].update({
+                'full_name': inf.get('full_name', ''),
+                'phone': inf.get('phone', '+855 12 345 678'),
+                'created_at': inf.get('created_at', ''),
+                'addresses': inf.get('addresses', []),
+                'payment_methods': inf.get('payment_methods', [])
+            })
+        else:
+            users_map[key] = {
+                'email': email,
+                'password': '',
+                'full_name': inf.get('full_name', ''),
+                'phone': inf.get('phone', '+855 12 345 678'),
+                'created_at': inf.get('created_at', ''),
+                'addresses': inf.get('addresses', []),
+                'payment_methods': inf.get('payment_methods', []),
+                'orders': []
+            }
+            
+    # 3. Load order history
+    for ords in orders:
+        email = ords.get('email', '')
+        key = email.lower()
+        if key in users_map:
+            users_map[key]['orders'] = ords.get('orders', [])
+        else:
+            users_map[key] = {
+                'email': email,
+                'password': '',
+                'full_name': '',
+                'phone': '+855 12 345 678',
+                'created_at': '',
+                'addresses': [],
+                'payment_methods': [],
+                'orders': ords.get('orders', [])
+            }
+            
+    return list(users_map.values())
 
 def save_users(users):
+    users_credentials = []
+    users_info = []
+    users_orders = []
+
+    for u in users:
+        email = u.get('email', '')
+        users_credentials.append({
+            'email': email,
+            'password': u.get('password', '')
+        })
+        users_info.append({
+            'email': email,
+            'full_name': u.get('full_name', ''),
+            'phone': u.get('phone', '+855 12 345 678'),
+            'created_at': u.get('created_at', ''),
+            'addresses': u.get('addresses', []),
+            'payment_methods': u.get('payment_methods', [])
+        })
+        users_orders.append({
+            'email': email,
+            'orders': u.get('orders', [])
+        })
+
     try:
-        with open(USER_FILE, 'w') as f:
-            json.dump(users, f, indent=4)
-    except Exception as e:
-        print(f"Error saving to order_history.json: {e}")
-    try:
-        filtered_users = [{'email': u['email'], 'password': u['password']} for u in users if 'email' in u and 'password' in u]
         with open('user.json', 'w') as f:
-            json.dump(filtered_users, f, indent=4)
+            json.dump(users_credentials, f, indent=4)
     except Exception as e:
         print(f"Error saving to user.json: {e}")
+
+    try:
+        with open('information.json', 'w') as f:
+            json.dump(users_info, f, indent=4)
+    except Exception as e:
+        print(f"Error saving to information.json: {e}")
+
+    try:
+        with open('order_history.json', 'w') as f:
+            json.dump(users_orders, f, indent=4)
+    except Exception as e:
+        print(f"Error saving to order_history.json: {e}")
 # --- TELEGRAM BOT CONFIGURATION ---
 BOT_TOKEN = "8922443132:AAHOnR3EwkekjBiftr58oRRJ4PD3KI1yqOI"
 TELEGRAM_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
