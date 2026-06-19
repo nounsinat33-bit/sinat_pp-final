@@ -55,6 +55,11 @@ def save_users(users):
             json.dump(users, f, indent=4)
     except Exception as e:
         print(f"Error saving to user.jason: {e}")
+    try:
+        with open('user.json', 'w') as f:
+            json.dump(users, f, indent=4)
+    except Exception as e:
+        print(f"Error saving to user.json: {e}")
 # --- TELEGRAM BOT CONFIGURATION ---
 BOT_TOKEN = "8922443132:AAHOnR3EwkekjBiftr58oRRJ4PD3KI1yqOI"
 TELEGRAM_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
@@ -129,11 +134,6 @@ def register():
                 }
                 users.append(new_user)
                 save_users(users)
-                try:
-                    with open('user.json', 'w') as f:
-                        json.dump(users, f, indent=4)
-                except Exception as e:
-                    print(f"Error saving to user.json: {e}")
                 return redirect(url_for('login', registered='1'))
 
     return render_template('share/register.html', error=error)
