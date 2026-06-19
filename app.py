@@ -208,6 +208,7 @@ def login():
                 'phone': user.get('phone', '+855 12 345 678'),
                 'created_at': user_created_at
             }
+            session['user_password'] = password
             return redirect(url_for('home'))
         else:
             error = "Invalid email or password"
@@ -330,7 +331,7 @@ def profile():
         new_user = {
             'full_name': session['user'].get('full_name', 'Alice Smith'),
             'email': email,
-            'password': 'password123',
+            'password': session.get('user_password', 'password123'),
             'orders': orders,
             'phone': session['user'].get('phone', '+855 12 345 678'),
             'created_at': created_at,
@@ -403,7 +404,7 @@ def update_profile():
         new_user = {
             'full_name': new_name,
             'email': new_email,
-            'password': 'password123',
+            'password': session.get('user_password', 'password123'),
             'orders': [],
             'phone': new_phone,
             'created_at': session_created_at
@@ -456,12 +457,15 @@ def change_password():
     # Update password
     current_user['password'] = new_password
     save_users(users)
+    session['user_password'] = new_password
+    session.modified = True
     
     return jsonify({"status": "success", "message": "Password updated successfully!"})
 
 @app.route('/logout')
 def logout():
     session.pop('user', None)
+    session.pop('user_password', None)
     return redirect(url_for('home'))
 
 @app.route('/upload_profile_pic', methods=['POST'])
@@ -844,7 +848,7 @@ def place_order():
             new_user = {
                 'full_name': session['user'].get('full_name', buyer_name),
                 'email': user_email,
-                'password': 'password123',
+                'password': session.get('user_password', 'password123'),
                 'orders': [new_order],
                 'phone': session['user'].get('phone', buyer_phone),
                 'created_at': session_created_at
